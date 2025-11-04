@@ -1,11 +1,12 @@
-// const { Product } = require('../models'); // not using it yet
+const { Product } = require('../models');
 
-// GET /products - example endpoint to get product list
+// GET /products
 const list = async (req, res) => {
   try {
-    res.status(200).json({ message: 'Endpoint /products is working!' });
+    const products = await Product.findAll();
+    res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Error fetching products: ' + error.message });
   }
 };
 
