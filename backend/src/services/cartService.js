@@ -68,7 +68,23 @@ const getCartContents = async () => {
   }
 };
 
+const removeItemFromCart = async (cartItemId) => {
+  try {
+    const item = await Cart.findByPk(cartItemId);
+    if (!item) {
+      const error = new Error('Cart item not found.');
+      error.status = 404;
+      throw error;
+    }
+    await item.destroy();
+    return { status: 204 }; // sucessful deletion with no content
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   addItemToCart,
   getCartContents,
+  removeItemFromCart
 };
