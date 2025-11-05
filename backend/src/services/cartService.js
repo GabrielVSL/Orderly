@@ -126,9 +126,20 @@ const updateItemQuantity = async (cartItemId, newQuantity) => {
   }
 };
 
+const checkoutCart = async () => {
+  try {
+    await Cart.destroy({ where: {} }); // Clear the cart
+
+    return { message: 'Checkout simulated successfully!' };
+  } catch (error) {
+    throw new Error('Error during checkout: ' + error.message);
+  }
+};
+
 module.exports = {
   addItemToCart,
   getCartContents,
   removeItemFromCart,
-  updateItemQuantity
+  updateItemQuantity,
+  checkoutCart
 };

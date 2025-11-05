@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 
+
 function QuantityPicker({ item, isLoading, onQuantityChange }) {
   const quantityOptions = Array.from({ length: 10 }, (_, i) => i + 1);
 
@@ -26,7 +27,7 @@ function QuantityPicker({ item, isLoading, onQuantityChange }) {
 }
 
 function Cart() {
-  const { cartItems, isLoading, error, removeFromCart, updateQuantity } = useCart();
+  const { cartItems, isLoading, error, removeFromCart, updateQuantity, checkout } = useCart();
 
   if (isLoading) {
     return <div>Loading cart...</div>;
@@ -76,6 +77,13 @@ function Cart() {
           <div className="cart-total" style={{ marginTop: '10px', fontWeight: 'bold' }}>
             <strong>Total: ${totalPrice.toFixed(2)}</strong>
           </div>
+          <button 
+            onClick={checkout} 
+            disabled={isLoading}
+            style={{ width: '100%', padding: '10px', background: 'green', color: 'white', marginTop: '10px' }}
+          >
+            {isLoading ? 'Processing...' : 'Proceed to Checkout'}
+          </button>
         </>
       )}
     </div>

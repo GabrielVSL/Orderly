@@ -7,10 +7,10 @@ import { CartProvider } from './context/CartContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <CartProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <CartProvider> 
         <App />
-      </BrowserRouter>
-    </CartProvider>
+      </CartProvider>
+    </BrowserRouter>
   </React.StrictMode>,
 )

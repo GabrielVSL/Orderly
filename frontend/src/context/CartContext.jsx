@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import api from "../services/api"; // API helper
 
 export const CartContext = createContext();
@@ -7,6 +8,7 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadCart = async () => {
@@ -112,7 +114,26 @@ export function CartProvider({ children }) {
     }
   };
 
-  const value = { cartItems, addToCart, isLoading: loading, error, removeFromCart, updateQuantity };
+  const checkout = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.post('/orders');
+      
+      // Clear cart
+      setCartItems([]);
+      // Redirect to success page
+      navigate('/success');
+
+    } catch (err) {
+      setError(err.message);
+      console.error('Failed to checkout:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const value = { cartItems, addToCart, isLoading: loading, error, removeFromCart, updateQuantity, checkout };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
