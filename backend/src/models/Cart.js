@@ -1,13 +1,22 @@
 module.exports = (sequelize, DataTypes) => {
   const Cart = sequelize.define('Cart', {
-    // in the future, connect with ProductId and UserId
+    productId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
       validate: {
-        min: 1,
-        max: 10 
+        min: {
+          args: [1],
+          msg: "Quantity must be at least 1."
+        },
+        max: {
+          args: [10],
+          msg: "Quantity cannot exceed 10."
+        }
       }
     }
   }, {

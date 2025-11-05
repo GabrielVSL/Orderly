@@ -1,8 +1,10 @@
 import React from 'react';
 import { useProducts } from '../hooks/useProducts';
+import { useCart } from '../context/CartContext';
 
 function HomePage() {
   const { products, isLoading, error } = useProducts();
+  const { addToCart, isLoading: isCartLoading } = useCart(); // addToCart function
 
   if (isLoading) {
     return <p>Loading products...</p>;
@@ -21,7 +23,12 @@ function HomePage() {
             <h3>{product.name}</h3>
             <p>{product.description}</p>
             <p><strong>${product.price}</strong></p>
-            <button>Add to Cart</button>
+
+            <button 
+              onClick={() => addToCart(product.id)}
+              disabled={isCartLoading}> {isCartLoading ? 'Adding...' : 'Add to Cart'}
+            </button>
+
           </div>
         ))}
       </div>
