@@ -83,8 +83,52 @@ const removeItemFromCart = async (cartItemId) => {
   }
 };
 
+const updateItemQuantity = async (cartItemId, newQuantity) => {
+  try {
+    // validation
+    if (newQuantity < 1) {
+      const error = new Error('Quantity must be at least 1.');
+      error.status = 400; // Bad Request
+      throw error;
+    }
+    if (newQuantity > 10) {
+      const error = new Error('Quantity cannot exceed 10.');
+      error.status = 400;
+      throw error;
+    }
+
+    // search item
+    const item = await Cart.findByPk(cartItemId);
+    if (!item) {
+      const error = new Error('Cart item not found.');
+      error.status = 404;
+      throw error;
+    }
+
+    // update 
+    item.quantity = newQuantity;
+    await item.save();
+
+    // fetch full item with new quantity
+    const fullCartItem = await Cart.findByPk(item.id, {
+      include: [{ model: Product, as: 'product' }]
+    });
+    
+    return fullCartItem;
+
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      const validationError = new Error(error.errors.map(e => e.message).join(', '));
+      validationError.status = 400;
+      throw validationError;
+    }
+    throw error;
+  }
+};
+
 module.exports = {
   addItemToCart,
   getCartContents,
-  removeItemFromCart
+  removeItemFromCart,
+  updateItemQuantity
 };

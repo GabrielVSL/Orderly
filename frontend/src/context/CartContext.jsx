@@ -78,7 +78,41 @@ export function CartProvider({ children }) {
     }
   };
 
-  const value = { cartItems, addToCart, isLoading: loading, error, removeFromCart };
+  const updateQuantity = async (cartItemId, newQuantity) => {
+    if (newQuantity < 1 || newQuantity > 10) {
+      console.error("Invalid quantity.");
+      return; 
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      // call API
+      const response = await api.put(`/cart/${cartItemId}`, {
+        quantity: newQuantity
+      });
+
+      setCartItems(prevItems => {
+        const updatedItem = response.data;
+        const existingItemIndex = prevItems.findIndex(item => item.id === updatedItem.id);
+
+        if (existingItemIndex !== -1) {
+          const updatedItems = [...prevItems];
+          updatedItems[existingItemIndex] = updatedItem;
+          return updatedItems;
+        }
+        return prevItems;
+      });
+
+    } catch (err) {
+      setError(err.message);
+      console.error('Failed to update quantity:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const value = { cartItems, addToCart, isLoading: loading, error, removeFromCart, updateQuantity };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

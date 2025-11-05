@@ -11,4 +11,7 @@ router.post('/', cartController.addItem);
 // DELETE /api/cart/:id
 router.delete('/:id', cartController.removeItem);
 
+// PUT /api/cart/:id
+router.put('/:id', cartController.updateItemQuantity);
+
 module.exports = router;
