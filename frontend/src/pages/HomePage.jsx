@@ -1,6 +1,7 @@
 import React from 'react';
 import { useProducts } from '../hooks/useProducts';
 import { useCart } from '../context/CartContext';
+import Cart from '../components/Cart';
 
 function HomePage() {
   const { products, isLoading, error } = useProducts();
@@ -16,6 +17,7 @@ function HomePage() {
 
   return (
     <div>
+      <Cart />
       <h2>Products</h2>
       <div className="product-list">
         {products.map(product => (
