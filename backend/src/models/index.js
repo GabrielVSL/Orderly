@@ -13,6 +13,8 @@ db.sequelize = sequelize;
 db.Product = require('./Product.js')(sequelize, Sequelize.DataTypes);
 db.Cart = require('./Cart.js')(sequelize, Sequelize.DataTypes);
 
-// assosciations ex: db.User.hasMany(db.Post);
+// Define associations
+db.Product.hasMany(db.Cart, { as: 'cartItems', foreignKey: 'productId' }); // "A Product can be in many Cart items"
+db.Cart.belongsTo(db.Product, { foreignKey: 'productId', as: 'product' }); // "A Cart item belongs to a single Product"
 
 module.exports = db;

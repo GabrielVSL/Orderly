@@ -1,15 +1,26 @@
-// const { Cart } = require('../models'); // not using it yet
+const cartService = require('../services/cartService');
 
-// GET /cart - example endpoint to get cart details
+const addItem = async (req, res) => {
+  const { productId, quantity } = req.body;
+  try {
+    const newItem = await cartService.addItemToCart(productId, quantity);
+    res.status(201).json(newItem);
+
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message });
+  }
+};
+
 const getCart = async (req, res) => {
   try {
-    res.status(200).json({ message: 'Endpoint /cart is working!' });
+    const items = await cartService.getCartContents();
+    res.status(200).json(items);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
 module.exports = {
-  getCart
-  // more methods here
+  addItem,
+  getCart,
 };

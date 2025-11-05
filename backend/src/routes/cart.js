@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const cartController = require('../controllers/cartController');
 
-// GET /api/cart/ - get cart items
+// GET /api/cart/
 router.get('/', cartController.getCart);
 
-// other cart routes are going here
+// POST /api/cart/
+router.post('/', cartController.addItem);
 
 module.exports = router;
