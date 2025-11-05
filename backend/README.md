@@ -68,3 +68,20 @@ This document details the API endpoints for the e-commerce system.
     * Returns an empty body with a `204 No Content` status, indicating successful deletion.
 * **Error Responses:**
     * `404 Not Found`: If `cartItemId` does not exist.
+
+### `PUT /api/cart/:id`
+
+* **Description:** Updates the quantity of a single item in the cart.
+* **Parameters:**
+    * `id` (URL param): The unique ID of the cart item to update (e.g., `7`).
+* **Body (JSON):**
+    ```json
+    {
+      "quantity": 5
+    }
+    ```
+* **Success Response (200):**
+    * Returns the full, updated cart item (with the nested `product` object).
+* **Error Responses:**
+    * `404 Not Found`: If `cartItemId` does not exist.
+    * `400 Bad Request`: If `quantity` is less than 1 or greater than 10.

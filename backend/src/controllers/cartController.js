@@ -30,8 +30,20 @@ const removeItem = async (req, res) => {
   }
 };
 
+const updateItemQuantity = async (req, res) => {
+  const { id } = req.params;
+  const { quantity } = req.body;
+  try {
+    const updatedItem = await cartService.updateItemQuantity(id, quantity);
+    res.status(200).json(updatedItem);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   addItem,
   getCart,
-  removeItem
+  removeItem,
+  updateItemQuantity
 };
