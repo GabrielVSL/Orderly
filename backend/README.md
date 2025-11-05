@@ -85,3 +85,19 @@ This document details the API endpoints for the e-commerce system.
 * **Error Responses:**
     * `404 Not Found`: If `cartItemId` does not exist.
     * `400 Bad Request`: If `quantity` is less than 1 or greater than 10.
+
+### Orders
+
+### `POST /api/orders`
+
+* **Description:** Processes a simulated checkout. This action will clear all items from the user's cart.
+* **Body:** (Empty)
+* **Success Response (200):**
+    * Returns a success message.
+    ```json
+    {
+      "message": "Order processed successfully."
+    }
+    ```
+* **Error Responses:**
+    * `500 Internal Server Error`: If clearing the cart fails.
