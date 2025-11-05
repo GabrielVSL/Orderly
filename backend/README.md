@@ -38,7 +38,7 @@ This document details the API endpoints for the e-commerce system.
     * `404 Not Found`: If `productId` does not exist.
     * `400 Bad Request`: If quantity exceeds 10
 
-    ### `GET /api/cart`
+### `GET /api/cart`
 
 * **Description:** Fetches all items currently in the cart.
 * **Success Response (200):**
@@ -58,3 +58,13 @@ This document details the API endpoints for the e-commerce system.
       }
     ]
     ```
+
+### `DELETE /api/cart/:id`
+
+* **Description:** Removes a single item from the cart by its *cart item ID* (the `id` of the row in `cart_items`, not the `productId`).
+* **Parameters:**
+    * `id` (URL param): The unique ID of the cart item to delete (e.g., `7`).
+* **Success Response (204):**
+    * Returns an empty body with a `204 No Content` status, indicating successful deletion.
+* **Error Responses:**
+    * `404 Not Found`: If `cartItemId` does not exist.

@@ -2,21 +2,17 @@ import React from 'react';
 import { useCart } from '../context/CartContext'; // Get our global cart brain
 
 function Cart() {
-  // Get all the data and tools from our CartContext
-  const { cartItems, isLoading, error } = useCart();
+  const { cartItems, isLoading, error, removeFromCart } = useCart();
 
-  // We can use the same loading state from the context
   if (isLoading) {
     return <div>Loading cart...</div>;
   }
-
   if (error) {
     return <div>Error loading cart: {error}</div>;
   }
 
   // Calculate the total price
   const totalPrice = cartItems.reduce((total, item) => {
-    // We can access item.product.price because of our backend "include"
     return total + (item.quantity * item.product.price);
   }, 0);
 
@@ -30,9 +26,21 @@ function Cart() {
         <>
           {cartItems.map(item => (
             <div key={item.id} className="cart-item" style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee' }}>
-              <span>{item.product.name}</span>
-              <span>(Qty: {item.quantity})</span>
-              <span>${(item.quantity * item.product.price).toFixed(2)}</span>
+              <div>
+                <span>{item.product.name}</span>
+                <span>(Qty: {item.quantity})</span>
+              </div>
+              <div>
+                <span>${(item.quantity * item.product.price).toFixed(2)}</span>
+
+                <button
+                  onClick={() => removeFromCart(item.id)}
+                  disable={isLoading}
+                  style={{ marginLeft: '10px', color: 'red', cursor: 'pointer' }}
+                >
+                  remove
+                </button>
+              </div>
             </div>
           ))}
           <div className="cart-total" style={{ marginTop: '10px', fontWeight: 'bold' }}>

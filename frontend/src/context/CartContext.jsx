@@ -60,7 +60,25 @@ export function CartProvider({ children }) {
     }
   };
 
-  const value = { cartItems, addToCart, isLoading: loading, error };
+  const removeFromCart = async (cartItemId) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await api.delete(`/cart/${cartItemId}`);
+
+      setCartItems(prevItems => 
+        prevItems.filter(item => item.id !== cartItemId)
+      );
+
+    } catch (err) {
+      setError(err.message);
+      console.error('Failed to remove item from cart:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const value = { cartItems, addToCart, isLoading: loading, error, removeFromCart };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

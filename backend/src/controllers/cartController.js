@@ -20,7 +20,18 @@ const getCart = async (req, res) => {
   }
 };
 
+const removeItem = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await cartService.removeItemFromCart(id);
+    res.status(204).send(); // successful delete
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   addItem,
   getCart,
+  removeItem
 };
