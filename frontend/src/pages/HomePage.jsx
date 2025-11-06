@@ -1,39 +1,47 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useProducts } from '../hooks/useProducts';
-import { useCart } from '../context/CartContext';
-import Cart from '../components/Cart';
+import ProductCard from '../components/ProductCard';
+import { Hero } from '../components/Hero'; 
 
 function HomePage() {
   const { products, isLoading, error } = useProducts();
-  const { addToCart, isLoading: isCartLoading } = useCart(); // addToCart function
-
   if (isLoading) {
-    return <p>Loading products...</p>;
+    return <p className="text-center text-gray-500">Loading products...</p>;
   }
-
   if (error) {
-    return <p>Error fetching products: {error}</p>;
+    return <p className="text-center text-red-500">Error fetching products: {error}</p>;
   }
 
   return (
-    <div>
-      <Cart />
-      <h2>Products</h2>
-      <div className="product-list">
-        {products.map(product => (
-          <div key={product.id} className="product-card" style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }}>
-            <h3>{product.name}</h3>
-            <p>{product.description}</p>
-            <p><strong>${product.price}</strong></p>
+    <div className="container mx-auto">
+      
+      <Hero />
 
-            <button 
-              onClick={() => addToCart(product.id)}
-              disabled={isCartLoading}> {isCartLoading ? 'Adding...' : 'Add to Cart'}
-            </button>
+      <section id="products" className="py-24">
+        <div className="text-center mb-16">
+          <h2 className="text-5xl font-bold mb-4 text-gray-900">
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-purple to-brand-pink">Menu</span>
+          </h2>
+          <p className="text-xl text-brand-gray">
+            Choose from our delicious selection
+          </p>
+        </div>
 
-          </div>
-        ))}
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {products.map((product, index) => (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <ProductCard product={product} />
+            </motion.div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
