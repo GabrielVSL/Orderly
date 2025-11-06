@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from "../services/api"; // API helper
+import toast from 'react-hot-toast'; // Toast notifications
 
 export const CartContext = createContext();
 
@@ -8,6 +9,8 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +30,9 @@ export function CartProvider({ children }) {
 
     loadCart();
   }, []);
+
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
 
   const addToCart = async (productId) => {
     setLoading(true);
@@ -54,6 +60,8 @@ export function CartProvider({ children }) {
           return [...prevItems, newItem];
         }
       });
+      toast.success(`${response.data.product.name} added to cart!`);
+      openCart();
     } catch (err) {
       setError(err.message);
       console.error("Failed to add item to cart:", err);
@@ -71,7 +79,7 @@ export function CartProvider({ children }) {
       setCartItems(prevItems => 
         prevItems.filter(item => item.id !== cartItemId)
       );
-
+      toast.success('Item removed from cart.');
     } catch (err) {
       setError(err.message);
       console.error('Failed to remove item from cart:', err);
@@ -81,9 +89,11 @@ export function CartProvider({ children }) {
   };
 
   const updateQuantity = async (cartItemId, newQuantity) => {
-    if (newQuantity < 1 || newQuantity > 10) {
-      console.error("Invalid quantity.");
-      return; 
+    if (newQuantity < 1)
+      return removeFromCart(cartItemId); // If quantity is less than 1, remove the item
+    if (newQuantity > 10) {
+      toast.error('Quantity must be between 1 and 10.');
+      return;
     }
 
     setLoading(true);
@@ -94,17 +104,14 @@ export function CartProvider({ children }) {
         quantity: newQuantity
       });
 
-      setCartItems(prevItems => {
-        const updatedItem = response.data;
-        const existingItemIndex = prevItems.findIndex(item => item.id === updatedItem.id);
+    const updatedItem = response.data;
+    setCartItems(prevItems => (
+      prevItems.map(item => 
+        item.id === updatedItem.id ? updatedItem : item
+      )
+    ));
 
-        if (existingItemIndex !== -1) {
-          const updatedItems = [...prevItems];
-          updatedItems[existingItemIndex] = updatedItem;
-          return updatedItems;
-        }
-        return prevItems;
-      });
+      toast.success(`Quantity updated.`);
 
     } catch (err) {
       setError(err.message);
@@ -114,26 +121,46 @@ export function CartProvider({ children }) {
     }
   };
 
-  const checkout = async () => {
+  const placeOrder = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.post('/orders');
+      // Call the backend endpoint
+      await api.post('/orders');
       
-      // Clear cart
+      // Clear the local cart
       setCartItems([]);
-      // Redirect to success page
+      toast.success('Order placed successfully!');
+      
+      // Navigate to the SUCCESS page
       navigate('/success');
 
     } catch (err) {
       setError(err.message);
-      console.error('Failed to checkout:', err);
+      toast.error(`Error: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  const value = { cartItems, addToCart, isLoading: loading, error, removeFromCart, updateQuantity, checkout };
+  const checkout = () => {
+    closeCart();
+    navigate('/checkout');
+  };
+
+  const value = { 
+    cartItems, 
+    addToCart, 
+    removeFromCart, 
+    updateQuantity, 
+    checkout, 
+    isLoading: loading, 
+    error,
+    isCartOpen,
+    openCart,
+    closeCart,
+    placeOrder
+  };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
