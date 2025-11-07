@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import Confetti from 'react-confetti'; // This is the new dependency!
-// We're using Heroicons
+import Confetti from 'react-confetti'; 
 import { CheckCircleIcon, HomeIcon, BuildingStorefrontIcon } from '@heroicons/react/24/solid';
+import { Button } from '../components/common/Button';
+import { PageLayout } from '../components/layout/PageLayout';
+import { GlassCard } from '../components/common/GlassCard';
 
-export const SucessPage = () => { // Renamed to SucessPage to match your file
-  // This is the hook from your TSX file, for the confetti
+export const SucessPage = () => { 
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -24,9 +24,7 @@ export const SucessPage = () => { // Renamed to SucessPage to match your file
   }, []);
 
   return (
-    // This is the background from your TSX
-    <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-brand-light via-purple-50 to-pink-50 flex items-center justify-center px-4">
-      {/* This is the A+ "Wow" factor */}
+    <PageLayout center={true}>
       <Confetti
         width={windowSize.width}
         height={windowSize.height}
@@ -52,7 +50,6 @@ export const SucessPage = () => { // Renamed to SucessPage to match your file
           }}
           className="mb-8"
         >
-          {/* Swapped for Heroicons */}
           <CheckCircleIcon className="w-32 h-32 mx-auto text-green-500" />
         </motion.div>
 
@@ -74,15 +71,13 @@ export const SucessPage = () => { // Renamed to SucessPage to match your file
           Thank you for your order! We'll send you a confirmation email with tracking details shortly.
         </motion.p>
 
-        <motion.div
+        <GlassCard
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          // This is our 'glass-card' style
-          className="bg-white/80 backdrop-blur-md border border-purple-200/50 p-6 rounded-2xl mb-8 shadow-xl"
+          className="p-6 rounded-2xl mb-8" 
         >
           <div className="flex items-center justify-center gap-3 mb-3">
-            {/* Swapped for Heroicons */}
             <BuildingStorefrontIcon className="w-6 h-6 text-brand-purple" />
             <span className="font-semibold text-lg text-gray-800">Order Number</span>
           </div>
@@ -94,7 +89,7 @@ export const SucessPage = () => { // Renamed to SucessPage to match your file
           >
             #ORD-{Math.floor(Math.random() * 10000).toString().padStart(4, "0")}
           </motion.p>
-        </motion.div>
+        </GlassCard>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -102,29 +97,17 @@ export const SucessPage = () => { // Renamed to SucessPage to match your file
           transition={{ delay: 1.2 }}
           className="space-y-4"
         >
-          {/* We use a <Link> component instead of a button with a handler,
-              because our Context already handled the logic. */}
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Link
-              to="/"
-              className="w-full flex items-center justify-center bg-gradient-to-r from-brand-purple to-brand-pink text-white font-bold py-4 text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-            >
+            <Button as="Link" to="/" variant="primary">
               <HomeIcon className="mr-2 h-5 w-5" />
               Back to Home
-            </Link>
-          </motion.div>
-
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <button
-              disabled
-              className="w-full font-semibold py-4 text-lg rounded-2xl border-2 border-purple-200/50 bg-white/50 backdrop-blur-sm text-gray-500 opacity-70 cursor-not-allowed"
-            >
+            </Button>
+            
+            <Button variant="secondary" disabled>
               Track Order (Not Implemented)
-            </button>
-          </motion.div>
+            </Button>
         </motion.div>
       </motion.div>
-    </div>
+    </PageLayout >
   );
 };
 
