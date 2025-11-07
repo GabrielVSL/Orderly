@@ -11,6 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false
     },
+    rating: {
+      type: DataTypes.DECIMAL(3, 1),
+      allowNull: false,
+      defaultValue: 4.0 
+    },
     imageUrl: {
       type: DataTypes.STRING
     }
