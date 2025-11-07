@@ -20,13 +20,10 @@ Por favor, veja as instruções abaixo para rodar cada parte.
 * **Gerenciamento de Estado:** React Context API (para o Carrinho)
 * **Estilização:** Tailwind CSS 
 * **Notificações:** `react-hot-toast` 
-* **Testes:** Jest, React Testing Library 
 
 ---
 
 ## 🚀 Como Rodar a Aplicação
-
-(Esta é a seção que você já escreveu, está perfeita)
 
 Você precisará de dois terminais separados para rodar este projeto.
 
@@ -92,31 +89,6 @@ Abra seu navegador e vá para `http://localhost:5173`. Você deve ver a página 
 
 ---
 
-## 🌟 Features Implementadas (Diferenciais)
-
-Além dos requisitos mínimos, este projeto implementa vários dos "diferenciais" opcionais  para demonstrar qualidade de código e uma arquitetura robusta.
-
-### Funcional
-- [x] **Filtros e Busca de Produtos:** A `HomePage` inclui filtros funcionais de busca por nome e preço máximo, com *debounce* para performance.
-- [x] **Feedback (Toasts):** Ações do usuário (como adicionar ao carrinho, finalizar pedido, erros) disparam notificações amigáveis usando `react-hot-toast`.
-- [x] **Paginação:** A `HomePage` inclui um componente de paginação completo.
-- [ ] *Persistência no LocalStorage:* (Não implementado, pois o `CartContext` foi projetado para carregar o carrinho da API).
-
-### Técnico
-- [x] **Componentização e Reutilização (DRY):** O código foi extensivamente refatorado. Lógica de UI repetida foi extraída em componentes reutilizáveis, como `Button`, `FormInput`, `GlassCard`, `PageLayout`, `OrderSummary`, `CardHeader` e `SectionHeader`. Isso segue o princípio DRY.
-- [x] **Estilização com Framework:** O projeto usa **Tailwind CSS** para um design consistente e responsivo.
-- [x] **Testes Unitários:** O projeto inclui testes de amostragem para componentes de UI (ex: `Button.test.jsx`) e lógica de página (ex: `HomePage.test.jsx`) usando Jest e React Testing Library.
-- [x] **Organização de Pastas:** A estrutura de pastas segue boas práticas (ex: `components/common`, `components/layout`, `context`, `hooks`, `pages`).
-- [x] **Documentação de API:** A API do backend está documentada abaixo.
-- [x] **Uso do Git:** O projeto foi desenvolvido usando branches por feature (ex: `refactor/component-library`, `docs/api-documentation`) com commits descritivos.
-
-### UX/UI
-- [x] **Animações e Transições:** O app usa `framer-motion` para animações suaves de entrada de página e hover de componentes, criando uma experiência de usuário fluida.
-- [x] **Layout Responsivo:** O uso de Tailwind CSS garante que o layout seja utilizável em dispositivos móveis (ex: o grid de produtos).
-- [x] **Mensagens de Erro Amigáveis:** As mensagens de erro técnicas da API (ex: "Network Error") são traduzidas para mensagens amigáveis ao usuário (ex: "Oops! Could not add item.").
-
----
-
 ## 📐 Decisões de Design e Premissas
 
 Esta seção aborda as principais decisões de arquitetura e premissas assumidas.
@@ -135,15 +107,6 @@ Esta seção aborda as principais decisões de arquitetura e premissas assumidas
 
 ---
 
-## 🧪 Testes Unitários
-
-Para demonstrar as boas práticas de teste, o projeto inclui testes de amostragem no frontend. A estratégia foi:
-
-* **Testar Componentes:** Validar a renderização e os estados dos componentes reutilizáveis (ex: `Button.test.jsx` verifica se o botão fica `disabled` corretamente).
-* **Testar Páginas (Mockando Hooks):** Validar a lógica da página (ex: `HomePage.test.jsx` "mocka" o hook `useProducts` para simular estados de "Loading" e "Error" e verifica se as mensagens corretas são exibidas na tela).
-
----
-
 ## 🤖 Uso de IA (Conforme Solicitado)
 
 Sim, uma ferramenta de IA (Gemini) foi utilizada neste desafio, conforme permitido.
@@ -153,7 +116,6 @@ Sim, uma ferramenta de IA (Gemini) foi utilizada neste desafio, conforme permiti
     * "Eu tenho este código repetido nas minhas páginas `CheckoutPage` e `SuccessPage`. Qual é a melhor forma de extraí-lo para um componente `Button` reutilizável?"
     * "Meu filtro de busca está chamando a API a cada tecla. Qual é o bug no meu `debounce` com `useState`?" (O que nos levou a usar `useRef`).
     * "Gere a documentação Markdown para estas rotas do Express."
-    * "Gere um exemplo de teste unitário com Jest para este componente `Button`."
 
 A IA não escreveu a lógica central do desafio, mas atuou como uma consultora sênior para identificar "code smells", sugerir padrões de design (como a extração de componentes) e acelerar tarefas repetitivas (como escrever documentação e testes).
 
