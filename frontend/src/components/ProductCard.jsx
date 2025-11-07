@@ -8,8 +8,7 @@ function ProductCard({ product, style }) {
   // fetch image URL from product data
   const imageUrl = product.imageUrl;
   
-  // need to be changed to real rating data fetched from API
-  const rating = (product.id % 5) * 0.1 + 4.5; // random rating between 4.5 and 4.9
+  const rating = product.rating || 4.0;
 
   return (
     <div 
