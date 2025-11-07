@@ -37,34 +37,34 @@ export function CartProvider({ children }) {
   const addToCart = async (productId) => {
     setLoading(true);
     setError(null);
+    const toastId = toast.loading('Adding item...');
 
     try {
       const response = await api.post("/cart", {
         productId: productId,
-        quantity: 1, // For now, just add it as quantity 1
+        quantity: 1,
       });
 
       setCartItems((prevItems) => {
         const newItem = response.data;
-
         const existingItemIndex = prevItems.findIndex(
           (item) => item.id === newItem.id
-        ); // verify
-        // If it exists, update it
+        );
         if (existingItemIndex !== -1) {
           const updatedItems = [...prevItems];
           updatedItems[existingItemIndex] = newItem;
           return updatedItems;
-          // otherwise, add it
         } else {
           return [...prevItems, newItem];
         }
       });
-      toast.success(`${response.data.product.name} added to cart!`);
+      
+      toast.success(`${response.data.product.name} added to cart!`, { id: toastId });
       openCart();
     } catch (err) {
       setError(err.message);
       console.error("Failed to add item to cart:", err);
+      toast.error('Oops! Could not add item. Please try again.', { id: toastId });
     } finally {
       setLoading(false);
     }
@@ -73,16 +73,19 @@ export function CartProvider({ children }) {
   const removeFromCart = async (cartItemId) => {
     setLoading(true);
     setError(null);
+    const toastId = toast.loading('Removing item...');
+
     try {
       await api.delete(`/cart/${cartItemId}`);
 
       setCartItems(prevItems => 
         prevItems.filter(item => item.id !== cartItemId)
       );
-      toast.success('Item removed from cart.');
+      toast.success('Item removed from cart.', { id: toastId });
     } catch (err) {
       setError(err.message);
       console.error('Failed to remove item from cart:', err);
+      toast.error('Failed to remove item. Please try again.', { id: toastId });
     } finally {
       setLoading(false);
     }
@@ -90,7 +93,7 @@ export function CartProvider({ children }) {
 
   const updateQuantity = async (cartItemId, newQuantity) => {
     if (newQuantity < 1)
-      return removeFromCart(cartItemId); // If quantity is less than 1, remove the item
+      return removeFromCart(cartItemId); 
     if (newQuantity > 10) {
       toast.error('Quantity must be between 1 and 10.');
       return;
@@ -99,23 +102,23 @@ export function CartProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
-      // call API
       const response = await api.put(`/cart/${cartItemId}`, {
         quantity: newQuantity
       });
 
-    const updatedItem = response.data;
-    setCartItems(prevItems => (
-      prevItems.map(item => 
-        item.id === updatedItem.id ? updatedItem : item
-      )
-    ));
-
+      const updatedItem = response.data;
+      setCartItems(prevItems => (
+        prevItems.map(item => 
+          item.id === updatedItem.id ? updatedItem : item
+        )
+      ));
+      
       toast.success(`Quantity updated.`);
 
     } catch (err) {
       setError(err.message);
       console.error('Failed to update quantity:', err);
+      toast.error('Failed to update quantity. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -124,20 +127,18 @@ export function CartProvider({ children }) {
   const placeOrder = async () => {
     setLoading(true);
     setError(null);
+    const toastId = toast.loading('Placing your order...');
+
     try {
-      // Call the backend endpoint
       await api.post('/orders');
-      
-      // Clear the local cart
       setCartItems([]);
-      toast.success('Order placed successfully!');
       
-      // Navigate to the SUCCESS page
+      toast.success('Order placed successfully!', { id: toastId });
       navigate('/success');
 
     } catch (err) {
       setError(err.message);
-      toast.error(`Error: ${err.message}`);
+      toast.error('Error placing order. Please check your details and try again.', { id: toastId });
     } finally {
       setLoading(false);
     }
