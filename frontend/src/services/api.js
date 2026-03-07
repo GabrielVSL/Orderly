@@ -2,6 +2,6 @@
 // Single Responsibility Principle + DRY
 import axios from 'axios';
 const api = axios.create({
-  baseURL: 'http://localhost:3001/api',
+  baseURL: 'https://onlineordersystem-1lm5.onrender.com/api',
 });
 export default api;
