@@ -1,4 +1,4 @@
-# dti Digital - Technical Challenge (Online Order System)
+Technical Challenge (Online Order System)
 
 Este repositório contém a avaliação prática para o Estágio DEV (Internship). É uma aplicação fullstack construída com um backend Node.js/Express  e um frontend React/Vite.
 
