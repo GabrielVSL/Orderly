@@ -43,7 +43,7 @@ export const OrderSummary = ({ className = '', ...props }) => {
                 </div>
               </div>
               <span className="font-medium text-gray-700">
-                ${(item.quantity * item.product.price).toFixed(2)}
+                ${Number((item.quantity * item.product.price)).toFixed(2)}
               </span>
             </div>
           ))
@@ -59,7 +59,7 @@ export const OrderSummary = ({ className = '', ...props }) => {
       <div className="space-y-2">
         <div className="flex justify-between text-brand-gray">
           <span>Subtotal</span>
-          <span className="font-semibold text-gray-800">${totalPrice.toFixed(2)}</span>
+          <span className="font-semibold text-gray-800">${Number(totalPrice).toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-brand-gray">
           <span>Delivery</span>
@@ -68,7 +68,7 @@ export const OrderSummary = ({ className = '', ...props }) => {
         <div className="h-px bg-purple-200/50 my-3" />
         <div className="flex justify-between items-center text-2xl font-bold text-gray-900">
           <span>Total</span>
-          <span className="text-brand-purple">${grandTotal.toFixed(2)}</span>
+          <span className="text-brand-purple">${Number(grandTotal).toFixed(2)}</span>
         </div>
       </div>
     </motion.div>

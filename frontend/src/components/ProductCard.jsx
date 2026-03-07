@@ -17,7 +17,7 @@ function ProductCard({ product, style }) {
     >
       <div className="relative">
         <img className="w-full h-56 object-cover" src={imageUrl} alt={product.name} />
-        <span className="absolute top-3 right-3 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">{rating.toFixed(1)} ★</span>
+        <span className="absolute top-3 right-3 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">{Number(rating).toFixed(1)} ★</span>
       </div>
       
       <div className="p-5">

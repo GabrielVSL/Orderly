@@ -80,7 +80,7 @@ function CartModal() {
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-gray-700">
                     <span>Subtotal</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>${Number(totalPrice).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span>Delivery</span>
@@ -88,7 +88,7 @@ function CartModal() {
                   </div>
                   <div className="flex justify-between text-xl font-bold text-gray-900">
                     <span>Total</span>
-                    <span>${grandTotal.toFixed(2)}</span>
+                    <span>${Number(grandTotal).toFixed(2)}</span>
                   </div>
                 </div>
                 
