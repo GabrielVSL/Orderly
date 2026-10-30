@@ -13,6 +13,11 @@ const PORT = process.env.PORT || 3001; // Port 3001 for not colliding with React
 app.use(cors());
 app.use(express.json()); // To parse JSON bodies into JS objects
 
+// Health check endpoint (ótimo para serviços de ping/uptime manterem o server acordado sem onerar o banco)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
