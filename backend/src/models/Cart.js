@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
   const Cart = sequelize.define('Cart', {
+    sessionId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'default-session'
+    },
     productId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -20,7 +25,12 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   }, {
-    tableName: 'cart_items'
+    tableName: 'cart_items',
+    indexes: [
+      {
+        fields: ['sessionId']
+      }
+    ]
   });
 
   return Cart;
