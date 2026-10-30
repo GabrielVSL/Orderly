@@ -2,6 +2,6 @@
 // Single Responsibility Principle + DRY
 import axios from 'axios';
 const api = axios.create({
-  baseURL: 'https://onlineordersystem-1lm5.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://orderly-api-560m.onrender.com/api',
 });
 export default api;
