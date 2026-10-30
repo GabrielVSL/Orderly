@@ -1,12 +1,14 @@
 import React from 'react';
 
-export const PageLayout = ({ children, center = false }) => {
-  const baseStyle = "min-h-[calc(100vh-80px)] bg-gradient-to-br from-brand-light via-purple-50 to-pink-50 px-4";
-  const centerStyle = center ? "flex items-center justify-center" : "py-12";
+export const PageLayout = ({ children, center = false, className = '' }) => {
+  const baseStyle = "min-h-[calc(100vh-80px)] bg-gradient-to-b from-brand-cream via-yellow-50/20 to-brand-cream px-4";
+  const centerStyle = center ? "flex items-center justify-center" : "py-10";
 
   return (
-    <div className={`${baseStyle} ${centerStyle}`}>
+    <div className={`${baseStyle} ${centerStyle} ${className}`}>
       {children}
     </div>
   );
 };
+
+export default PageLayout;

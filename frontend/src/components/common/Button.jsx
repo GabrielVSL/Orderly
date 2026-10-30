@@ -9,23 +9,25 @@ export const Button = ({
   children,
   ...props
 }) => {
-  const baseStyle = "w-full flex items-center justify-center font-bold py-4 text-lg rounded-2xl transition-all duration-300";
+  const baseStyle = "w-full flex items-center justify-center font-bold py-4 text-base sm:text-lg rounded-2xl transition-all duration-300 shadow-md";
 
   const styles = {
-    primary: "bg-gradient-to-r from-brand-purple to-brand-pink text-white shadow-lg hover:shadow-xl disabled:bg-gray-400 disabled:shadow-none",
-    secondary: "border-2 border-purple-200/50 bg-white/50 backdrop-blur-sm text-gray-700 hover:border-purple-300 hover:shadow-lg " + 
-               "disabled:text-gray-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-white/50 disabled:border-purple-200/50 disabled:shadow-none"
+    primary: "bg-brand-red hover:bg-red-700 text-white shadow-red-500/20 hover:shadow-lg disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none cursor-pointer",
+    secondary: "border-2 border-yellow-300 bg-white hover:bg-yellow-50 text-brand-dark hover:border-yellow-400 hover:shadow-md disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 cursor-pointer",
+    accent: "bg-brand-yellow hover:bg-yellow-400 text-brand-dark shadow-yellow-500/20 font-black cursor-pointer"
   };
 
-  const combinedClassName = `${baseStyle} ${styles[variant]} ${className}`;
+  const combinedClassName = `${baseStyle} ${styles[variant] || styles.primary} ${className}`;
 
   const Component = as === 'Link' ? Link : 'button';
 
   return (
-    <motion.div whileHover={{ scale: props.disabled ? 1 : 1.02 }} whileTap={{ scale: props.disabled ? 1 : 0.98 }}>
+    <motion.div whileHover={{ scale: props.disabled ? 1 : 1.01 }} whileTap={{ scale: props.disabled ? 1 : 0.98 }}>
       <Component className={combinedClassName} {...props}>
         {children}
       </Component>
     </motion.div>
   );
 };
+
+export default Button;

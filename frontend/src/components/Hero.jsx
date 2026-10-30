@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from "framer-motion";
 import { AnimatedLogo } from "./common/AnimatedLogo";
-import { ArrowRightIcon, SparklesIcon } from "@heroicons/react/24/solid"; // icons
+import { ArrowDownIcon, SparklesIcon, FireIcon } from "@heroicons/react/24/solid";
+import { brandConfig } from '../config/brandConfig';
 
 export const Hero = () => {
   const scrollToProducts = () => {
@@ -9,107 +10,84 @@ export const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden bg-gradient-to-br from-brand-light via-purple-50 to-pink-50">
-      <div className="absolute inset-0 overflow-hidden">
+    <section className="relative min-h-[75vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-brand-cream via-yellow-50/50 to-brand-cream border-b-2 border-yellow-200">
+      
+      {/* Decorative blurred retro blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute top-20 left-20 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
-          animate={{ scale: [1, 1.2, 1], x: [0, 50, 0], y: [0, 30, 0] }}
+          className="absolute -top-10 left-10 w-96 h-96 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-35"
+          animate={{ scale: [1, 1.2, 1], x: [0, 40, 0], y: [0, 20, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-20 right-20 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
-          animate={{ scale: [1, 1.3, 1], x: [0, -50, 0], y: [0, -30, 0] }}
+          className="absolute bottom-10 right-10 w-96 h-96 bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-25"
+          animate={{ scale: [1, 1.3, 1], x: [0, -40, 0], y: [0, -20, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-          animate={{ scale: [1, 1.4, 1], x: [-50, 50, -50] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
 
-      <div className="container mx-auto px-4 z-10 text-center">
+      <div className="container mx-auto px-4 z-10 text-center py-16">
+        
+        {/* Promotion pill */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="mb-6"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-yellow/30 border border-brand-yellow text-brand-dark text-xs sm:text-sm font-bold mb-6 shadow-sm"
         >
-          <SparklesIcon className="w-12 h-12 mx-auto mb-4 text-brand-purple animate-pulse" />
+          <SparklesIcon className="w-4 h-4 text-brand-red animate-pulse" />
+          <span>Frete Grátis a partir de R$ 50 • Use o cupom <strong>PATTIES10</strong></span>
         </motion.div>
 
-        <AnimatedLogo className="text-7xl md:text-9xl mb-8" />
+        {/* Brand name animated */}
+        <AnimatedLogo className="text-7xl md:text-9xl mb-4 font-black" />
+
+        {/* Tagline & Slogan */}
+        <motion.h2
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="text-2xl md:text-4xl font-black text-brand-dark mb-4 tracking-tight"
+        >
+          {brandConfig.tagline}
+        </motion.h2>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="text-xl md:text-3xl text-brand-gray mb-12 max-w-3xl mx-auto font-light"
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="text-base md:text-lg text-gray-700 mb-10 max-w-2xl mx-auto leading-relaxed"
         >
-          Experience the future of online ordering.
-          <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-purple to-brand-pink font-medium">
-            Fast. Beautiful. Effortless.
-          </span>
+          {brandConfig.slogan}
         </motion.p>
 
+        {/* CTA Buttons */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.8, duration: 0.4 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <button
             onClick={scrollToProducts}
-            className="group relative overflow-hidden bg-gradient-to-r from-brand-purple to-brand-pink text-white font-semibold px-8 py-4 text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-brand-red hover:bg-red-700 text-white rounded-full font-black text-lg shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all"
           >
-            <span className="relative z-10 flex items-center gap-2">
-              Start Ordering
-              <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </span>
+            <FireIcon className="w-6 h-6 text-brand-yellow" />
+            Explorar Cardápio
           </button>
           
           <button
-            className="font-semibold px-8 py-4 text-lg rounded-2xl border-2 border-purple-200/50 bg-white/50 backdrop-blur-sm text-gray-700 hover:border-purple-300 hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+            onClick={scrollToProducts}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-4 bg-white/80 hover:bg-white text-brand-dark border-2 border-yellow-300 rounded-full font-bold text-base shadow-sm hover:shadow-md transition-all"
           >
-            Learn More
+            <ArrowDownIcon className="w-5 h-5 text-brand-red" />
+            Combos & Smash
           </button>
         </motion.div>
-        
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.6, duration: 0.8 }}
-          className="mt-20 flex gap-8 justify-center items-center text-brand-gray"
-        >
-          {["Fast Delivery", "Secure Payment", "24/7 Support"].map((feature, index) => (
-            <motion.div
-              key={feature}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.8 + index * 0.1 }}
-              className="flex items-center gap-2"
-            >
-              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-pink" />
-              <span className="text-sm font-medium hidden sm:inline">{feature}</span>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
 
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <div className="w-6 h-10 border-2 border-brand-purple/30 rounded-full flex justify-center">
-          <motion.div
-            className="w-1.5 h-1.5 bg-brand-purple rounded-full mt-2"
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </div>
-      </motion.div>
+      </div>
     </section>
   );
 };
+
+export default Hero;

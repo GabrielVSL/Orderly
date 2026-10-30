@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 export function AnimatedLogo({ className = "" }) {
-  const letters = "Orderly".split("");
+  const letters = "Patties".split("");
   
   const container = {
     hidden: { opacity: 0 },
@@ -38,16 +38,13 @@ export function AnimatedLogo({ className = "" }) {
       variants={container}
       initial="hidden"
       animate="visible"
-      className={`flex items-center justify-center pointer-events-none ${className}`}
+      className={`flex items-center justify-center pointer-events-none select-none ${className}`}
     >
       {letters.map((char, index) => (
         <motion.span
           key={index}
           variants={letter}
-          className="text-transparent bg-clip-text bg-gradient-to-r from-brand-purple to-brand-pink font-bold inline-block"
-          style={{
-            textShadow: "0 0 30px rgba(167, 139, 250, 0.5)",
-          }}
+          className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-brand-yellow font-black inline-block tracking-tight drop-shadow-sm"
         >
           {char}
         </motion.span>
@@ -55,3 +52,5 @@ export function AnimatedLogo({ className = "" }) {
     </motion.div>
   );
 }
+
+export default AnimatedLogo;
