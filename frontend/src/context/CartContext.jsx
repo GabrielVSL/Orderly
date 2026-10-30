@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import api from "../services/api"; // API helper
-import toast from 'react-hot-toast'; // Toast notifications
+import api from "../services/api";
+import toast from 'react-hot-toast';
 
 export const CartContext = createContext();
 
@@ -34,15 +34,15 @@ export function CartProvider({ children }) {
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
-  const addToCart = async (productId) => {
+  const addToCart = async (productId, quantity = 1) => {
     setLoading(true);
     setError(null);
-    const toastId = toast.loading('Adding item...');
+    const toastId = toast.loading('Adicionando à sacola...');
 
     try {
       const response = await api.post("/cart", {
         productId: productId,
-        quantity: 1,
+        quantity: quantity,
       });
 
       setCartItems((prevItems) => {
@@ -59,12 +59,12 @@ export function CartProvider({ children }) {
         }
       });
       
-      toast.success(`${response.data.product.name} added to cart!`, { id: toastId });
+      toast.success(`${response.data.product.name} adicionado!`, { id: toastId });
       openCart();
     } catch (err) {
-      setError(err.message);
-      console.error("Failed to add item to cart:", err);
-      toast.error('Oops! Could not add item. Please try again.', { id: toastId });
+      const msg = err.response?.data?.message || 'Não foi possível adicionar o item. Tente novamente.';
+      setError(msg);
+      toast.error(msg, { id: toastId });
     } finally {
       setLoading(false);
     }
@@ -73,7 +73,7 @@ export function CartProvider({ children }) {
   const removeFromCart = async (cartItemId) => {
     setLoading(true);
     setError(null);
-    const toastId = toast.loading('Removing item...');
+    const toastId = toast.loading('Removendo...');
 
     try {
       await api.delete(`/cart/${cartItemId}`);
@@ -81,21 +81,19 @@ export function CartProvider({ children }) {
       setCartItems(prevItems => 
         prevItems.filter(item => item.id !== cartItemId)
       );
-      toast.success('Item removed from cart.', { id: toastId });
+      toast.success('Item removido da sacola.', { id: toastId });
     } catch (err) {
       setError(err.message);
-      console.error('Failed to remove item from cart:', err);
-      toast.error('Failed to remove item. Please try again.', { id: toastId });
+      toast.error('Erro ao remover item.', { id: toastId });
     } finally {
       setLoading(false);
     }
   };
 
   const updateQuantity = async (cartItemId, newQuantity) => {
-    if (newQuantity < 1)
-      return removeFromCart(cartItemId); 
+    if (newQuantity < 1) return removeFromCart(cartItemId); 
     if (newQuantity > 10) {
-      toast.error('Quantity must be between 1 and 10.');
+      toast.error('O limite é de 10 unidades por item.');
       return;
     }
 
@@ -113,32 +111,36 @@ export function CartProvider({ children }) {
         )
       ));
       
-      toast.success(`Quantity updated.`);
+      toast.success(`Quantidade atualizada.`);
 
     } catch (err) {
-      setError(err.message);
-      console.error('Failed to update quantity:', err);
-      toast.error('Failed to update quantity. Please try again.');
+      const msg = err.response?.data?.message || 'Erro ao atualizar quantidade.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  const placeOrder = async () => {
+  const placeOrder = async (orderPayload) => {
     setLoading(true);
     setError(null);
-    const toastId = toast.loading('Placing your order...');
+    const toastId = toast.loading('Finalizando seu pedido...');
 
     try {
-      await api.post('/orders');
+      const response = await api.post('/orders', orderPayload);
+      const createdOrder = response.data.order;
       setCartItems([]);
       
-      toast.success('Order placed successfully!', { id: toastId });
-      navigate('/success');
+      toast.success('Pedido realizado com sucesso!', { id: toastId });
+      navigate('/success', { state: { order: createdOrder } });
+      return createdOrder;
 
     } catch (err) {
-      setError(err.message);
-      toast.error('Error placing order. Please check your details and try again.', { id: toastId });
+      const msg = err.response?.data?.message || err.message || 'Erro ao processar pedido. Verifique os dados.';
+      setError(msg);
+      toast.error(msg, { id: toastId });
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -166,7 +168,6 @@ export function CartProvider({ children }) {
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
-// hook
 export const useCart = () => {
   const context = useContext(CartContext);
   if (context === undefined) {

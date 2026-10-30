@@ -1,50 +1,66 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { PlusIcon, MinusIcon, TrashIcon } from '@heroicons/react/24/outline'; 
+import { formatCurrency } from '../utils/formatCurrency';
 
 function CartItemRow({ item, isLoading, removeFromCart, updateQuantity }) {
-  // UUse imageUrl from product data or a placeholder
-  const imageUrl = item.product.imageUrl || `https://placehold.co/100x100/E9D5FF/6B21A8?text=${item.product.name.charAt(0)}`;
+  const imageUrl = item.product.imageUrl || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400';
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, x: -20 }}
+      initial={{ opacity: 0, x: -15 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      className="flex items-center space-x-4 p-4 rounded-2xl border border-purple-200/50 bg-white"
+      exit={{ opacity: 0, x: 15 }}
+      className="flex items-center space-x-3.5 p-3.5 rounded-2xl border border-yellow-200/80 bg-white shadow-sm"
     >
-      <img src={imageUrl} alt={item.product.name} className="w-20 h-20 rounded-md object-cover" />
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold">{item.product.name}</h3>
-        <p className="text-brand-purple font-bold">${item.product.price}</p>
+      <img 
+        src={imageUrl} 
+        alt={item.product.name} 
+        className="w-16 h-16 rounded-xl object-cover border border-yellow-100 flex-shrink-0" 
+      />
+      
+      <div className="flex-1 min-w-0">
+        <h4 className="text-sm font-black text-brand-dark truncate">
+          {item.product.name}
+        </h4>
+        <p className="text-brand-red font-black text-sm">
+          {formatCurrency(item.product.price)}
+        </p>
       </div>
-      <div className="flex flex-col items-end">
-        
-        <div className="flex items-center border rounded-full">
+
+      <div className="flex items-center gap-2">
+        <div className="flex items-center border border-gray-200 rounded-full bg-gray-50">
           <button 
             onClick={() => updateQuantity(item.id, item.quantity - 1)} 
             disabled={isLoading}
-            className="p-2 text-gray-600 hover:text-red-500"
+            aria-label="Diminuir quantidade"
+            className="p-1.5 text-gray-600 hover:text-brand-red disabled:opacity-50 transition-colors"
           >
-            <MinusIcon className="h-4 w-4" />
+            <MinusIcon className="h-3.5 w-3.5" />
           </button>
-          <span className="px-3 font-semibold">{item.quantity}</span>
+          
+          <span className="px-2 font-black text-xs text-brand-dark">
+            {item.quantity}
+          </span>
+          
           <button 
             onClick={() => updateQuantity(item.id, item.quantity + 1)} 
-            disabled={isLoading}
-            className="p-2 text-gray-600 hover:text-green-500"
+            disabled={isLoading || item.quantity >= 10}
+            aria-label="Aumentar quantidade"
+            className="p-1.5 text-gray-600 hover:text-green-600 disabled:opacity-30 transition-colors"
           >
-            <PlusIcon className="h-4 w-4" />
+            <PlusIcon className="h-3.5 w-3.5" />
           </button>
         </div>
         
         <button 
           onClick={() => removeFromCart(item.id)} 
           disabled={isLoading}
-          className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-100 transition-colors disabled:opacity-50"
+          aria-label="Remover item"
+          className="p-1.5 text-gray-400 hover:text-brand-red hover:bg-red-50 rounded-full transition-colors disabled:opacity-50"
         >
-          <TrashIcon className="h-5 w-5" />
+          <TrashIcon className="h-4 w-4" />
         </button>
       </div>
     </motion.div>
