@@ -1,57 +1,29 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { brandConfig } from '../../config/brandConfig';
 
-export function AnimatedLogo({ className = "" }) {
-  const letters = "Orderly".split("");
-  
-  const container = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const letter = {
-    hidden: {
-      opacity: 0,
-      y: 50,
-      rotateX: -90,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      rotateX: 0,
-      transition: {
-        type: "spring",
-        damping: 12,
-        stiffness: 200,
-      },
-    },
-  };
-
+export function AnimatedLogo({ className = "", showTagline = true }) {
   return (
     <motion.div
-      variants={container}
-      initial="hidden"
-      animate="visible"
-      className={`flex items-center justify-center pointer-events-none ${className}`}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "spring", damping: 15, stiffness: 200 }}
+      className={`flex flex-col items-center justify-center select-none ${className}`}
     >
-      {letters.map((char, index) => (
-        <motion.span
-          key={index}
-          variants={letter}
-          className="text-transparent bg-clip-text bg-gradient-to-r from-brand-purple to-brand-pink font-bold inline-block"
-          style={{
-            textShadow: "0 0 30px rgba(167, 139, 250, 0.5)",
-          }}
-        >
-          {char}
-        </motion.span>
-      ))}
+      <motion.img 
+        src={brandConfig.logoUrl} 
+        alt="Patties Burger" 
+        className="h-28 sm:h-36 md:h-44 w-auto object-contain drop-shadow-md mb-2"
+        whileHover={{ rotate: [-2, 2, -1, 1, 0], scale: 1.05 }}
+        transition={{ duration: 0.4 }}
+      />
+      {showTagline && (
+        <span className="font-script text-patties-red text-xl sm:text-2xl md:text-3xl tracking-wide -mt-2">
+          {brandConfig.tagline}
+        </span>
+      )}
     </motion.div>
   );
 }
+
+export default AnimatedLogo;

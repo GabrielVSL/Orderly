@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./models'); // taking the index.js from models folder
+const db = require('./models');
+const sessionMiddleware = require('./middleware/sessionMiddleware');
 
 // Import routes
 const productRoutes = require('./routes/products');
@@ -8,12 +9,13 @@ const cartRoutes = require('./routes/cart');
 const orderRoutes = require('./routes/order');
 
 const app = express();
-const PORT = process.env.PORT || 3001; // Port 3001 for not colliding with React's default 3000
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
-app.use(express.json()); // To parse JSON bodies into JS objects
+app.use(express.json());
+app.use(sessionMiddleware);
 
-// Health check endpoint (ótimo para serviços de ping/uptime manterem o server acordado sem onerar o banco)
+// Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
@@ -21,9 +23,6 @@ app.get('/health', (req, res) => {
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
-
-
-// functions 
 
 async function startServer() {
   try { 
@@ -38,4 +37,8 @@ async function startServer() {
   }
 }
 
-startServer();
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}
+
+module.exports = app;

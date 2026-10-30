@@ -1,16 +1,31 @@
 const productService = require('../services/productService');
 
-// GET /products
+// GET /api/products
 const list = async (req, res) => {
   try {
-    const products = await productService.getAllProducts();
+    const { category, search, maxPrice } = req.query;
+    const products = await productService.getAllProducts({ category, search, maxPrice });
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching products: ' + error.message });
   }
 };
 
+// GET /api/products/:id
+const getById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await productService.getProductById(id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found.' });
+    }
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching product: ' + error.message });
+  }
+};
+
 module.exports = {
   list,
-  // other product controller methods
+  getById
 };

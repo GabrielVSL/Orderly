@@ -16,6 +16,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 4.0 
     },
+    category: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'burgers'
+    },
+    isFeatured: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
     imageUrl: {
       type: DataTypes.STRING
     }

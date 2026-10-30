@@ -1,182 +1,335 @@
 const { sequelize, Product } = require('../models');
 
-// SEED DATA
-const productSeedData = [
+const pattiesProductSeedData = [
+  // --- LANCHES (SMASH BURGERS) ---
   {
-    name: 'Classic Burger',
-    description: 'Juicy beef patty with lettuce, tomato, and cheese.',
-    price: 15.99,
-    imageUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&h=600&fit=crop",
-    rating: 4.5
+    name: 'Original Patties Burger',
+    description: 'Pão tostado na manteiga + Carne ultra smash prensada com crostinha crocante + Queijo cheddar derretido, Cebola picadinha, Picles artesanal, Ketchup e Mostarda.',
+    price: 20.00,
+    rating: 4.9,
+    category: 'lanches',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/ORIGINAL.jpg'
   },
   {
-    name: 'Margherita Pizza',
-    description: 'Classic tomato, mozzarella, and basil.',
-    price: 14.99,
-    imageUrl: "https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=800&h=600&fit=crop",
-    rating: 4.7
+    name: 'Cheeseburguer Patties',
+    description: 'Pão fofinho tostado na manteiga + Carne ultra smash com crostinha crocante + Queijo cheddar cremoso fundido. O clássico definitivo do Patties!',
+    price: 19.00,
+    rating: 4.9,
+    category: 'lanches',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/CHEESEBURGUER.jpg'
   },
   {
-    name: 'Caesar Salad',
-    description: 'Fresh romaine with parmesan and croutons.',
-    price: 8.99,
-    imageUrl: "https://images.pexels.com/photos/2097090/pexels-photo-2097090.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1",
-    rating: 4.2
+    name: 'Cheese Bacon Patties',
+    description: 'Pão tostado na manteiga + Carne ultra smash prensada + Queijo cheddar derretido + Fatias ultra crocantes de bacon defumado especial.',
+    price: 23.00,
+    rating: 5.0,
+    category: 'lanches',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/CHEESEBACON.jpg'
   },
   {
-    name: 'Crispy Chicken Sandwich',
-    description: 'Fried chicken breast with pickles and mayo.',
-    price: 13.99,
-    imageUrl: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&h=600&fit=crop",
-    rating: 4.6
+    name: 'Cheese Salada Patties',
+    description: 'Pão tostado + Carne smash prensada na chapa + Queijo cheddar derretido + Alface fresca, Tomate, Cebola roxa e Picles crocante da casa.',
+    price: 21.00,
+    rating: 4.7,
+    category: 'lanches',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/CHEESESALADA.jpg'
   },
   {
-    name: 'Onion Rings',
-    description: 'Golden-fried and perfectly seasoned.',
-    price: 6.99,
-    imageUrl: "https://images.unsplash.com/photo-1612487439058-0564e17f761b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=800h=600&dpr=1",
-    rating: 4.3
+    name: 'Cheese Onion Patties',
+    description: 'Pão tostado na manteiga + Carne ultra smash + Queijo cheddar fundido + Deliciosa cebola caramelizada douradinha na chapa.',
+    price: 22.00,
+    rating: 4.8,
+    category: 'lanches',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/CHEESEONION.jpg'
   },
   {
-    name: 'Chocolate Milkshake',
-    description: 'Thick, creamy, and topped with whipped cream.',
-    price: 7.99,
-    imageUrl: "https://images.unsplash.com/photo-1714799263245-4fc7cc21911e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1099",
-    rating: 4.8
+    name: 'Patties Vegê',
+    description: 'Pão tostado na manteiga + Blend de vegetais prensado na chapa com crostinha dourada + Queijo cheddar derretido e picles artesanal.',
+    price: 21.00,
+    rating: 4.6,
+    category: 'lanches',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/VEGE.jpg'
+  },
+
+  // --- LINHA 4-UP (MONSTER SMASH) ---
+  {
+    name: '4-UP Cheese Bacon Monster',
+    description: '4 carnes ultra smash prensadas com crostinha crocante de chapa, 4 fatias de queijo derretido e muito bacon crocante no pão tostado.',
+    price: 37.00,
+    rating: 5.0,
+    category: '4up',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/4-UP-CHEESEBACON.jpg'
   },
   {
-    name: 'Fries',
-    description: 'Crispy golden french fries.',
-    price: 5.99,
-    imageUrl: "https://images.unsplash.com/photo-1576107232684-1279f390859f?w=800&h=600&fit=crop",
-    rating: 4.4
+    name: '4-UP Original Monster',
+    description: '4 carnes ultra smash prensadas, quadruplo queijo cheddar fundido, cebola picadinha, picles, ketchup e mostarda no pão fofinho tostado.',
+    price: 35.00,
+    rating: 4.9,
+    category: '4up',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/4-UP-ORINGINAL.jpg'
   },
   {
-    name: 'Veggie Burger',
-    description: 'A plant-based patty, avocado, and sprouts.',
-    price: 18.99,
-    imageUrl: "https://images.unsplash.com/photo-1525059696034-4967a8e1dca2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=800&h=600&fit=crop&crop=edges&gravity=south",
-    rating: 4.1
-  },
-  { 
-    name: 'Soda',
-    description: 'Your choice of fountain drink.',
-    price: 2.99,
-    imageUrl: "https://images.unsplash.com/photo-1605548230624-8d2d0419c517?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=800&h=600&fit=crop",
-    rating: 4.0
+    name: '4-UP Cheeseburguer Monster',
+    description: '4 carnes ultra smash prensadas na chapa com quadruplo queijo cheddar fundido. Para quem ama o clássico smash em dose quádrupla!',
+    price: 34.00,
+    rating: 4.8,
+    category: '4up',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/4-UP-CHEESEBURGUER.jpg'
   },
   {
-    name: 'Smartphone X',
-    description: 'The latest smartphone with a stunning display.',
-    price: 799.99,
-    imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&h=600&fit=crop",
-    rating: 4.7
+    name: '4-UP Cheese Onion Monster',
+    description: '4 carnes smash fininhas com crostinha, quadruplo queijo cheddar e generosa porção de cebola chapeada na manteiga.',
+    price: 36.00,
+    rating: 4.8,
+    category: '4up',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/4-UP-CHEESE-ONION.jpg'
   },
   {
-    name: 'Wireless Headphones',
-    description: 'Noise-cancelling over-ear headphones.',
-    price: 199.99,
-    imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=600&fit=crop",
-    rating: 4.6
+    name: '4-UP Patties Vegê Monster',
+    description: 'A versão quádrupla do nosso burger vegetariano com blend exclusivo Patties, muito queijo e picles no pão tostado na manteiga.',
+    price: 27.00,
+    rating: 4.6,
+    category: '4up',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/4-UP-VEGE.jpg'
+  },
+
+  // --- COMBOS COMPLETOS ---
+  {
+    name: 'Combo Original Clássico',
+    description: '1 Original Patties Burger + 1 Batata Skinny Classic crocante + 1 Refresco artesanal da casa ou refrigerante em lata.',
+    price: 39.90,
+    rating: 5.0,
+    category: 'combos',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/COMBO-ORIGINAL.jpg'
   },
   {
-    name: 'Elegant Wristwatch',
-    description: 'A classic timepiece for any occasion.',
-    price: 349.99,
-    imageUrl: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=800&h=600&fit=crop",
-    rating: 4.8
+    name: 'Combo Cheeseburguer',
+    description: '1 Cheeseburguer Patties + 1 Batata Skinny Classic sequinha + 1 Bebida bem gelada à sua escolha.',
+    price: 38.90,
+    rating: 4.9,
+    category: 'combos',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/COMBO-CHEESEBURGUER.jpg'
   },
   {
-    name: 'Compact Laptop Pro',
-    description: 'Powerful and portable for work on the go.',
-    price: 1199.99,
-    imageUrl: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=600&fit=crop",
-    rating: 4.9
+    name: 'Combo Cheese Bacon',
+    description: '1 Cheese Bacon Patties duplo com fatias crocantes de bacon + 1 Batata Skinny Classic + 1 Bebida geladinha.',
+    price: 42.90,
+    rating: 4.9,
+    category: 'combos',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/COMBO-CHEESEBACON.jpg'
   },
   {
-    name: 'Gaming Console Z',
-    description: 'Next-generation gaming with 8K support.',
-    price: 499.99,
-    imageUrl: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800&h=600&fit=crop",
-    rating: 4.7
+    name: 'Combo 4-UP Monster Original',
+    description: '1 4-UP Original (4 carnes smash prensadas) + 1 Batata Skinny Classic + 1 Bebida. O combo pra quem tem apetite monstro!',
+    price: 54.90,
+    rating: 5.0,
+    category: 'combos',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/COMBO-4-UP-ORIGINAL.jpg'
+  },
+
+  // --- LINHA FRANGO & BITES ---
+  {
+    name: 'Supreme Classic Frango',
+    description: 'Peito de frango ultra crocante com tempero secreto da casa, maionese especial Patties e picles artesanal no pão tostado na manteiga.',
+    price: 24.00,
+    rating: 4.8,
+    category: 'frango',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/09/supreme-calssic-frango.jpg'
   },
   {
-    name: 'Wireless Mouse',
-    description: 'Ergonomic mouse with 2.4GHz wireless.',
-    price: 25.99,
-    imageUrl: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=800&h=600&fit=crop",
-    rating: 4.4
+    name: 'Supreme Salad Frango',
+    description: 'Frango empanado super crocante, queijo, alface americana fresca crocante, tomate e molho especial no pão fofinho.',
+    price: 25.00,
+    rating: 4.7,
+    category: 'frango',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/09/supreme-salad-frango.jpg'
   },
   {
-    name: 'USB-C Hub',
-    description: '8-in-1 adapter for all your peripherals.',
-    price: 49.99,
-    imageUrl: "https://images.unsplash.com/photo-1564286027156-9ad736dfbbbb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=772",
-    rating: 4.5
+    name: 'Bites de Frango (4 unid)',
+    description: 'Pedaços selecionados de peito de frango 100% real marinados e empanados com casquinha crocante sequinha. Acompanha molho da casa.',
+    price: 14.00,
+    rating: 4.8,
+    category: 'frango',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/09/bites-de-4.jpg'
   },
   {
-    name: 'Smart Speaker',
-    description: 'Voice-controlled speaker with rich sound.',
-    price: 89.99,
-    imageUrl: "https://images.unsplash.com/photo-1586078875290-c22eb791ad5d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
-    rating: 4.6
+    name: 'Bites de Frango (8 unid)',
+    description: '8 pedaços suculentos e crocantes de peito de frango com nosso empanamento retrô especial. Acompanha molho classic da casa.',
+    price: 24.00,
+    rating: 4.9,
+    category: 'frango',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/09/bites-de-8.jpg'
+  },
+
+  // --- BATATAS & SIDES ---
+  {
+    name: 'Skinny Classic Fries',
+    description: 'A icônica batata frita fininha, sequinha e ultra crocante no estilo diner retrô americano, temperada com flor de sal marinho.',
+    price: 16.00,
+    rating: 4.9,
+    category: 'batatas',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/1-skinny-classic-fries-1.jpg'
   },
   {
-    name: 'Portable SSD',
-    description: '1TB of blazing-fast external storage.',
-    price: 129.99,
-    imageUrl: "https://images.unsplash.com/photo-1628557118391-56cd62c9f2cb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=765",
-    rating: 4.9
+    name: 'Skinny Perfect Cheddar & Bacon',
+    description: 'Nossa batata Skinny fininha crocante coberta com generosa calda de queijo cheddar cremoso aquecido e farofa crocante de bacon.',
+    price: 24.00,
+    rating: 5.0,
+    category: 'batatas',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/2---skinny-perfect-fries.jpg'
   },
   {
-    name: 'Tablet Pro',
-    description: 'A powerful tablet for creativity and productivity.',
-    price: 649.99,
-    imageUrl: "https://images.unsplash.com/photo-1607452258545-943d7243463c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
-    rating: 4.7
+    name: 'Nhonhonese da Casa (Pote 50ml)',
+    description: 'A famosa maionese verde artesanal do Patties, receita secreta com blend fresco de ervas. O acompanhamento perfeito para suas fritas!',
+    price: 5.00,
+    rating: 5.0,
+    category: 'batatas',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2024/09/nhonhonese.jpg'
+  },
+
+  // --- REFRESCOS & BEBIDAS ---
+  {
+    name: 'Refresco de Groselha com Hibiscus (400ml)',
+    description: 'O sabor mais clássico do Patties! Groselha artesanal equilibrada com infusão natural de flores de hibiscus, servido estupidamente gelado.',
+    price: 12.00,
+    rating: 4.9,
+    category: 'bebidas',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2024/09/refresco-hibiscus.jpg'
   },
   {
-    name: '4K Webcam',
-    description: 'Crystal-clear video for your meetings.',
-    price: 159.99,
-    imageUrl: "https://images.unsplash.com/photo-1733218430878-902cc0cff502?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
-    rating: 4.5
+    name: 'Refresco de Tamarindo (400ml)',
+    description: 'Refresco artesanal autêntico preparado com a acidez equilibrada do puro tamarindo. Refrescância vintage inconfundível.',
+    price: 12.00,
+    rating: 4.8,
+    category: 'bebidas',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2024/09/refresco-tamarindo.jpg'
   },
   {
-    name: 'Mechanical Keyboard',
-    description: 'Clicky switches for a satisfying typing experience.',
-    price: 119.99,
-    imageUrl: "https://images.unsplash.com/photo-1602025882379-e01cf08baa51?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
-    rating: 4.8
+    name: 'Heineken Long Neck (330ml)',
+    description: 'Cerveja puro malte Heineken trincando de gelada no ponto certo para harmonizar com seu smash burger.',
+    price: 14.00,
+    rating: 4.8,
+    category: 'bebidas',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/HEINEKEN.jpg'
+  },
+  {
+    name: 'Água Cristal Sem Gás (500ml)',
+    description: 'Garrafa de água mineral pura e gelada.',
+    price: 6.00,
+    rating: 4.5,
+    category: 'bebidas',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/AGUA-CRISTAL-SEM-GAS.jpg'
+  },
+  {
+    name: 'Água Cristal Com Gás (500ml)',
+    description: 'Garrafa de água mineral gaseificada servida bem gelada.',
+    price: 6.00,
+    rating: 4.5,
+    category: 'bebidas',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2022/04/AGUA-CRISTAL-COM-GAS.jpg'
+  },
+
+  // --- SHAKES & SOBREMESAS ---
+  {
+    name: 'Milkshake Frosted Baunilha',
+    description: 'Sorvete artesanal cremoso batido com leite gelado, baunilha clássica retrô e calda especial na taça.',
+    price: 21.00,
+    rating: 4.9,
+    category: 'sobremesas',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8---Milkshake-Frosted-1024x982.jpg'
+  },
+  {
+    name: 'Milkshake Pink Morango',
+    description: 'Sorvete artesanal batido com calda de morangos reais, textura aveludada e sabor irresistível.',
+    price: 21.00,
+    rating: 4.8,
+    category: 'sobremesas',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8---Milkshake-Pink-1024x982.jpg'
+  },
+  {
+    name: 'Milkshake Blue Retrô',
+    description: 'O icônico shake azul do Patties com sabor nostálgico de baunilha americana e algodão-doce.',
+    price: 21.00,
+    rating: 4.9,
+    category: 'sobremesas',
+    isFeatured: true,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8---Milkshake-Blue-1024x982.jpg'
+  },
+  {
+    name: 'Cascão Frosted Baunilha',
+    description: 'Casquinha waffer super crocante com sorvete cremoso estilo máquina americana retrô.',
+    price: 9.00,
+    rating: 4.7,
+    category: 'sobremesas',
+    isFeatured: false,
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8---cascao-frosted-1024x982.jpg'
   }
 ];
 
-// const userSeedData = [ ... ];
-
-// SEEDERS
-const seedProducts = () => {
-  console.log('Seeding products...');
-  return Product.bulkCreate(productSeedData);
-};
-// const seedUsers = () => {};
-
-// run the seeders
-const Seed = async () => {
+async function seedDatabase() {
   try {
-    await sequelize.sync({ force: true }); // drops and recreates all tables
-    console.log('Database synced! Tables dropped and recreated.');
+    await sequelize.authenticate();
+    console.log(' Conexão com o banco estabelecida com sucesso.');
 
-    await Promise.all([
-      seedProducts(),
-      // add more seeders here as needed
-    ]);
-    console.log('All data seeded successfully!');
+    // Sincroniza tabelas se ainda não existirem
+    await sequelize.sync();
+
+    // Desativa foreign keys temporariamente para permitir limpeza segura
+    const dialect = sequelize.getDialect();
+    if (dialect === 'sqlite') {
+      await sequelize.query('PRAGMA foreign_keys = OFF;');
+    }
+
+    // Limpa produtos antigos
+    await Product.destroy({ where: {} });
+    console.log(' Tabela de produtos limpa.');
+
+    // Insere catálogo oficial Patties Burger
+    const inserted = await Product.bulkCreate(pattiesProductSeedData);
+    console.log(` Sucesso! ${inserted.length} itens oficiais do Patties Burger foram semeados no banco de dados.`);
+
+    if (dialect === 'sqlite') {
+      await sequelize.query('PRAGMA foreign_keys = ON;');
+    }
   } catch (error) {
-    console.error('Error seeding database:', error);
+    console.error('❌ Falha ao semear banco de dados:', error);
+    process.exit(1);
   } finally {
     await sequelize.close();
-    console.log('Database connection closed.');
   }
-};
+}
 
-Seed();
+if (require.main === module) {
+  seedDatabase();
+}
+
+module.exports = { seedDatabase, pattiesProductSeedData };

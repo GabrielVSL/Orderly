@@ -9,23 +9,25 @@ export const Button = ({
   children,
   ...props
 }) => {
-  const baseStyle = "w-full flex items-center justify-center font-bold py-4 text-lg rounded-2xl transition-all duration-300";
+  const baseStyle = "w-full flex items-center justify-center font-black py-3.5 sm:py-4 text-base uppercase tracking-wider rounded-xl transition-all duration-200 cursor-pointer";
 
   const styles = {
-    primary: "bg-gradient-to-r from-brand-purple to-brand-pink text-white shadow-lg hover:shadow-xl disabled:bg-gray-400 disabled:shadow-none",
-    secondary: "border-2 border-purple-200/50 bg-white/50 backdrop-blur-sm text-gray-700 hover:border-purple-300 hover:shadow-lg " + 
-               "disabled:text-gray-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-white/50 disabled:border-purple-200/50 disabled:shadow-none"
+    primary: "bg-patties-red hover:bg-patties-red-dark text-white shadow-badge-red hover:shadow-elevated disabled:bg-neutral-200 disabled:text-neutral-400 disabled:shadow-none disabled:cursor-not-allowed",
+    secondary: "bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-200/80 shadow-soft hover:shadow-elevated disabled:bg-neutral-100 disabled:text-neutral-400 disabled:shadow-none disabled:cursor-not-allowed",
+    accent: "bg-patties-yellow hover:bg-patties-yellow-warm text-neutral-900 shadow-soft hover:shadow-elevated disabled:bg-neutral-200 disabled:text-neutral-400 disabled:shadow-none disabled:cursor-not-allowed"
   };
 
-  const combinedClassName = `${baseStyle} ${styles[variant]} ${className}`;
+  const combinedClassName = `${baseStyle} ${styles[variant] || styles.primary} ${className}`;
 
   const Component = as === 'Link' ? Link : 'button';
 
   return (
-    <motion.div whileHover={{ scale: props.disabled ? 1 : 1.02 }} whileTap={{ scale: props.disabled ? 1 : 0.98 }}>
+    <motion.div whileTap={{ scale: props.disabled ? 1 : 0.98 }}>
       <Component className={combinedClassName} {...props}>
         {children}
       </Component>
     </motion.div>
   );
 };
+
+export default Button;

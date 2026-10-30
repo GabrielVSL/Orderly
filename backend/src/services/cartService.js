@@ -1,6 +1,6 @@
 const { Cart, Product } = require('../models');
 
-const addItemToCart = async (productId, quantity) => {
+const addItemToCart = async (sessionId, productId, quantity) => {
   const product = await Product.findByPk(productId);
 
   if (!product) {
@@ -13,11 +13,15 @@ const addItemToCart = async (productId, quantity) => {
   let cartItem;
 
   try {
-    // Find the item
-    const existingItem = await Cart.findOne({ where: { productId: productId } });
+    // Find the item scoped to the user's session
+    const existingItem = await Cart.findOne({ 
+      where: { 
+        sessionId: sessionId, 
+        productId: productId 
+      } 
+    });
 
     if (existingItem) { 
-      // Update quantity
       const newQuantity = existingItem.quantity + quantityToAdd;
       if (newQuantity > 10) {
         const error = new Error('Quantity cannot exceed 10.');
@@ -27,8 +31,13 @@ const addItemToCart = async (productId, quantity) => {
       existingItem.quantity = newQuantity;
       cartItem = await existingItem.save(); 
     } else {
-      // Create new item
+      if (quantityToAdd > 10) {
+        const error = new Error('Quantity cannot exceed 10.');
+        error.status = 400;
+        throw error;
+      }
       cartItem = await Cart.create({
+        sessionId: sessionId,
         productId: productId,
         quantity: quantityToAdd,
       });
@@ -42,7 +51,7 @@ const addItemToCart = async (productId, quantity) => {
       }]
     });
 
-    return fullCartItem; // This is the final, full item
+    return fullCartItem;
 
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
@@ -54,13 +63,15 @@ const addItemToCart = async (productId, quantity) => {
   }
 };
 
-const getCartContents = async () => {
+const getCartContents = async (sessionId) => {
   try {
     const items = await Cart.findAll({
+      where: { sessionId: sessionId },
       include: [{
         model: Product,
         as: 'product'
-      }]
+      }],
+      order: [['createdAt', 'ASC']]
     });
     return items;
   } catch (error) {
@@ -68,27 +79,33 @@ const getCartContents = async () => {
   }
 };
 
-const removeItemFromCart = async (cartItemId) => {
+const removeItemFromCart = async (sessionId, cartItemId) => {
   try {
-    const item = await Cart.findByPk(cartItemId);
+    const item = await Cart.findOne({
+      where: { 
+        id: cartItemId,
+        sessionId: sessionId 
+      }
+    });
+
     if (!item) {
-      const error = new Error('Cart item not found.');
+      const error = new Error('Cart item not found in this session.');
       error.status = 404;
       throw error;
     }
+
     await item.destroy();
-    return { status: 204 }; // sucessful deletion with no content
+    return { status: 204 };
   } catch (error) {
     throw error;
   }
 };
 
-const updateItemQuantity = async (cartItemId, newQuantity) => {
+const updateItemQuantity = async (sessionId, cartItemId, newQuantity) => {
   try {
-    // validation
     if (newQuantity < 1) {
       const error = new Error('Quantity must be at least 1.');
-      error.status = 400; // Bad Request
+      error.status = 400;
       throw error;
     }
     if (newQuantity > 10) {
@@ -97,19 +114,22 @@ const updateItemQuantity = async (cartItemId, newQuantity) => {
       throw error;
     }
 
-    // search item
-    const item = await Cart.findByPk(cartItemId);
+    const item = await Cart.findOne({
+      where: { 
+        id: cartItemId,
+        sessionId: sessionId 
+      }
+    });
+
     if (!item) {
-      const error = new Error('Cart item not found.');
+      const error = new Error('Cart item not found in this session.');
       error.status = 404;
       throw error;
     }
 
-    // update 
     item.quantity = newQuantity;
     await item.save();
 
-    // fetch full item with new quantity
     const fullCartItem = await Cart.findByPk(item.id, {
       include: [{ model: Product, as: 'product' }]
     });
@@ -126,10 +146,9 @@ const updateItemQuantity = async (cartItemId, newQuantity) => {
   }
 };
 
-const checkoutCart = async () => {
+const checkoutCart = async (sessionId) => {
   try {
-    await Cart.destroy({ where: {} }); // Clear the cart
-
+    await Cart.destroy({ where: { sessionId: sessionId } });
     return { message: 'Checkout simulated successfully!' };
   } catch (error) {
     throw new Error('Error during checkout: ' + error.message);
