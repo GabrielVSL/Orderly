@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
+// Em produção, a chave JWT_SECRET é obrigatória nas variáveis de ambiente (Twelve-Factor App)
 if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
   throw new Error('FATAL: Variável de ambiente JWT_SECRET é obrigatória em produção.');
 }
-const JWT_SECRET = process.env.JWT_SECRET || 'patties-burger-secret-key-2026';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'patties-burger-dev-secret-local-only';
 
 // Middleware que detecta se há token JWT e anexa req.user (opcional para rotas mistas)
 const extractUser = async (req, res, next) => {

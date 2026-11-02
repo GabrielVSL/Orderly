@@ -21,7 +21,7 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
 
-// SEC-07: Configuração restrita de CORS
+// SEC-07: Configuração de CORS compatível com ambientes de deploy
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:5173',
@@ -30,7 +30,18 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || process.env.NODE_ENV !== 'production' || allowedOrigins.includes(origin)) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (
+      origin.includes('localhost') || 
+      origin.includes('127.0.0.1') || 
+      origin.endsWith('.vercel.app') || 
+      origin.endsWith('.onrender.com') ||
+      origin.endsWith('.netlify.app')
+    ) {
+      return callback(null, true);
+    }
+    if (!process.env.FRONTEND_URL) {
       return callback(null, true);
     }
     return callback(new Error('Origem não permitida pelo CORS'));

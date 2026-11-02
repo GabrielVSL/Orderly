@@ -44,32 +44,15 @@ export function OrderTrackingProvider({ children }) {
     setNotification(null);
   }, []);
 
-  // Busca e sincroniza status do pedido
+  // Busca e sincroniza status do pedido ativo
   const fetchActiveOrderStatus = useCallback(async () => {
     if (isPollingRef.current) return;
+    if (!activeOrderNumber) return;
+
     isPollingRef.current = true;
 
     try {
-      let targetNumber = activeOrderNumber;
-
-      // Se não tem activeOrderNumber no state/localStorage, tenta pegar a comanda mais recente da sessão/usuário
-      if (!targetNumber) {
-        const listRes = await api.get('/orders');
-        const orders = listRes.data || [];
-        if (orders.length > 0) {
-          const latest = orders[0];
-          targetNumber = latest.orderNumber;
-          setActiveOrderNumber(latest.orderNumber);
-          localStorage.setItem('patties_active_order', latest.orderNumber);
-          setActiveOrder(latest);
-          previousStatusRef.current = latest.status;
-          return;
-        }
-      }
-
-      if (!targetNumber) return;
-
-      const res = await api.get(`/orders/${targetNumber}`);
+      const res = await api.get(`/orders/${activeOrderNumber}`);
       const updatedOrder = res.data;
 
       if (!updatedOrder) return;
@@ -84,10 +67,10 @@ export function OrderTrackingProvider({ children }) {
         const stage = STAGE_INFO[newStatus] || STAGE_INFO.received;
         
         // Exibe notificação no topo se o usuário não estiver na tela desse pedido específico
-        const isCurrentlyViewingOrder = location.pathname === `/orders/${targetNumber}`;
+        const isCurrentlyViewingOrder = location.pathname === `/orders/${activeOrderNumber}`;
 
         setNotification({
-          orderNumber: targetNumber,
+          orderNumber: activeOrderNumber,
           prevStatus: oldStatus,
           newStatus,
           title: stage.title,
@@ -98,20 +81,26 @@ export function OrderTrackingProvider({ children }) {
 
         // Auto-dispensa após 10 segundos
         setTimeout(() => {
-          setNotification((curr) => (curr?.orderNumber === targetNumber ? null : curr));
+          setNotification((curr) => (curr?.orderNumber === activeOrderNumber ? null : curr));
         }, 10000);
       }
 
       previousStatusRef.current = newStatus;
-    } catch {
-      // Pedido não encontrado ou privado
+    } catch (err) {
+      // Se a comanda salva não existir mais no backend (404), limpa para cessar tentativas
+      if (err.response?.status === 404) {
+        clearActiveOrder();
+      }
     } finally {
       isPollingRef.current = false;
     }
-  }, [activeOrderNumber, location.pathname]);
+  }, [activeOrderNumber, location.pathname, clearActiveOrder]);
 
-  // Polling periódico a cada 5 segundos para auto-avanço das etapas
+  // Polling periódico a cada 5 segundos apenas SE houver uma comanda ativa e ela ainda não foi entregue
   useEffect(() => {
+    if (!activeOrderNumber) return;
+    if (activeOrder?.status === 'delivered') return;
+
     fetchActiveOrderStatus();
 
     const interval = setInterval(() => {
@@ -119,7 +108,7 @@ export function OrderTrackingProvider({ children }) {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [fetchActiveOrderStatus]);
+  }, [fetchActiveOrderStatus, activeOrderNumber, activeOrder?.status]);
 
   const value = {
     activeOrder,
