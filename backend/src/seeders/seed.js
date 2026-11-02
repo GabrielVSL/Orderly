@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { sequelize, Product, Cart } = require('../models');
 
 const pattiesProductSeedData = [
@@ -300,7 +301,7 @@ async function seedDatabase() {
     await sequelize.authenticate();
     console.log(' Conexão com o banco estabelecida com sucesso.');
 
-    // Garante compatibilidade de colunas no SQLite de forma segura
+    // Garante compatibilidade de colunas em bancos pré-existentes (SQLite e PostgreSQL Neon)
     const queryInterface = sequelize.getQueryInterface();
     const safeAddColumn = async (table, column, definition) => {
       try {
@@ -308,11 +309,16 @@ async function seedDatabase() {
         if (!tableDesc[column]) {
           await queryInterface.addColumn(table, column, definition);
         }
-      } catch {}
+      } catch {
+        // Tabela ainda não existe antes do sync inicial
+      }
     };
 
-    await safeAddColumn('orders', 'userId', { type: sequelize.Sequelize.INTEGER, allowNull: true });
+    await safeAddColumn('products', 'category', { type: sequelize.Sequelize.STRING, allowNull: false, defaultValue: 'lanches' });
+    await safeAddColumn('products', 'isFeatured', { type: sequelize.Sequelize.BOOLEAN, allowNull: false, defaultValue: false });
+    await safeAddColumn('cart_items', 'sessionId', { type: sequelize.Sequelize.STRING, allowNull: false, defaultValue: 'default-session' });
     await safeAddColumn('cart_items', 'notes', { type: sequelize.Sequelize.TEXT, allowNull: true });
+    await safeAddColumn('orders', 'userId', { type: sequelize.Sequelize.INTEGER, allowNull: true });
     await safeAddColumn('order_items', 'notes', { type: sequelize.Sequelize.TEXT, allowNull: true });
     await safeAddColumn('users', 'resetPasswordToken', { type: sequelize.Sequelize.STRING, allowNull: true });
     await safeAddColumn('users', 'resetPasswordExpires', { type: sequelize.Sequelize.DATE, allowNull: true });
@@ -322,16 +328,16 @@ async function seedDatabase() {
 
     const dialect = sequelize.getDialect();
     const forceSeed = process.argv.includes('--force');
-    const existingCount = await Product.count();
+    const hasPattiesCatalog = await Product.findOne({ where: { name: 'Original Patties Burger' } });
 
-    if (existingCount > 0 && !forceSeed && dialect === 'postgres') {
-      console.log(` Catálogo já possui ${existingCount} produtos em produção (PostgreSQL). Pulando recriação destrutiva.`);
+    if (hasPattiesCatalog && !forceSeed && dialect === 'postgres') {
+      console.log(' Catálogo oficial do Patties já está presente no PostgreSQL. Pulando recriação destrutiva.');
     } else {
       if (dialect === 'sqlite') {
         await sequelize.query('PRAGMA foreign_keys = OFF;');
       }
 
-      // Limpa produtos antigos e popula catálogo oficial
+      // Limpa produtos antigos (ex: template Smartphone X de 30/10) e popula catálogo oficial
       await Cart.destroy({ where: {} });
       await Product.destroy({ where: {} });
       console.log(' Tabela de produtos limpa.');

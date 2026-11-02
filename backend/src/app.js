@@ -108,8 +108,11 @@ async function ensureDatabaseSchema() {
     }
   };
 
-  await safeAddColumn('orders', 'userId', { type: db.Sequelize.INTEGER, allowNull: true });
+  await safeAddColumn('products', 'category', { type: db.Sequelize.STRING, allowNull: false, defaultValue: 'lanches' });
+  await safeAddColumn('products', 'isFeatured', { type: db.Sequelize.BOOLEAN, allowNull: false, defaultValue: false });
+  await safeAddColumn('cart_items', 'sessionId', { type: db.Sequelize.STRING, allowNull: false, defaultValue: 'default-session' });
   await safeAddColumn('cart_items', 'notes', { type: db.Sequelize.TEXT, allowNull: true });
+  await safeAddColumn('orders', 'userId', { type: db.Sequelize.INTEGER, allowNull: true });
   await safeAddColumn('order_items', 'notes', { type: db.Sequelize.TEXT, allowNull: true });
   await safeAddColumn('users', 'resetPasswordToken', { type: db.Sequelize.STRING, allowNull: true });
   await safeAddColumn('users', 'resetPasswordExpires', { type: db.Sequelize.DATE, allowNull: true });
@@ -121,11 +124,13 @@ async function startServer() {
     await db.sequelize.sync(); 
     console.log('Banco de dados conectado e sincronizado.');
 
-    // Auto-seed: se o banco estiver vazio (ex: novo clone ou ambiente sem seed), popula automaticamente
-    const count = await db.Product.count();
-    if (count === 0) {
-      console.log('Banco de dados sem produtos. Executando seed automático oficial do Patties...');
+    // Auto-seed: se o banco estiver vazio ou ainda com o template antigo (ex: Smartphone X), popula o catálogo oficial Patties
+    const hasPattiesCatalog = await db.Product.findOne({ where: { name: 'Original Patties Burger' } });
+    if (!hasPattiesCatalog) {
+      console.log('Sincronizando catálogo oficial do Patties Burger...');
       const { pattiesProductSeedData } = require('./seeders/seed');
+      await db.Cart.destroy({ where: {} });
+      await db.Product.destroy({ where: {} });
       await db.Product.bulkCreate(pattiesProductSeedData);
       console.log(`Auto-seed concluído com sucesso: ${pattiesProductSeedData.length} produtos cadastrados.`);
     }
