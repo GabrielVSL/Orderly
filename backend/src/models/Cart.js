@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
   const Cart = sequelize.define('Cart', {
+    sessionId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'default-session'
+    },
     productId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -18,9 +23,18 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Quantity cannot exceed 10."
         }
       }
+    },
+    notes: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     }
   }, {
-    tableName: 'cart_items'
+    tableName: 'cart_items',
+    indexes: [
+      {
+        fields: ['sessionId']
+      }
+    ]
   });
 
   return Cart;

@@ -1,27 +1,50 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 
-export const useProducts = () => {
+export const useProducts = (filters = {}) => {
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const [products, setProducts] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const { category, search } = filters;
 
-    // Async function to fetch products from the API
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await api.get('/products');
-                setProducts(response.data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+  useEffect(() => {
+    let isMounted = true;
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const params = {};
+        if (category && category !== 'todos' && category !== 'all') {
+          params.category = category;
+        }
+        if (search && search.trim()) {
+          params.search = search.trim();
+        }
 
-        fetchProducts();
-    }, []); // runs once on mount
+        const response = await api.get('/products', { params });
+        if (isMounted) {
+          setProducts(response.data);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err.response?.data?.message || err.message || 'Erro ao carregar cardápio.');
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
 
-    return { products, isLoading, error };
+    fetchProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [category, search]);
+
+  return { products, isLoading, error };
 };
+
+export default useProducts;

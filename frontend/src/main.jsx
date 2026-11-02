@@ -3,14 +3,20 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import './index.css'
+import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
+import { OrderTrackingProvider } from './context/OrderTrackingContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <CartProvider> 
-        <App />
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider> 
+          <OrderTrackingProvider>
+            <App />
+          </OrderTrackingProvider>
+        </CartProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,
 )

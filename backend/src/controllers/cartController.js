@@ -1,11 +1,10 @@
 const cartService = require('../services/cartService');
 
 const addItem = async (req, res) => {
-  const { productId, quantity } = req.body;
+  const { productId, quantity, notes } = req.body;
   try {
-    const newItem = await cartService.addItemToCart(productId, quantity);
+    const newItem = await cartService.addItemToCart(req.sessionId, productId, quantity, notes);
     res.status(201).json(newItem);
-
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message });
   }
@@ -13,7 +12,7 @@ const addItem = async (req, res) => {
 
 const getCart = async (req, res) => {
   try {
-    const items = await cartService.getCartContents();
+    const items = await cartService.getCartContents(req.sessionId);
     res.status(200).json(items);
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message });
@@ -23,8 +22,8 @@ const getCart = async (req, res) => {
 const removeItem = async (req, res) => {
   const { id } = req.params;
   try {
-    await cartService.removeItemFromCart(id);
-    res.status(204).send(); // successful delete
+    await cartService.removeItemFromCart(req.sessionId, id);
+    res.status(204).send();
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message });
   }
@@ -34,7 +33,7 @@ const updateItemQuantity = async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
   try {
-    const updatedItem = await cartService.updateItemQuantity(id, quantity);
+    const updatedItem = await cartService.updateItemQuantity(req.sessionId, id, quantity);
     res.status(200).json(updatedItem);
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message });

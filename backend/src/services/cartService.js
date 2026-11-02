@@ -1,6 +1,6 @@
 const { Cart, Product } = require('../models');
 
-const addItemToCart = async (productId, quantity) => {
+const addItemToCart = async (sessionId, productId, quantity, notes = null) => {
   const product = await Product.findByPk(productId);
 
   if (!product) {
@@ -10,14 +10,20 @@ const addItemToCart = async (productId, quantity) => {
   }
 
   const quantityToAdd = quantity || 1;
+  const cleanNotes = typeof notes === 'string' && notes.trim() ? notes.trim() : null;
   let cartItem;
 
   try {
-    // Find the item
-    const existingItem = await Cart.findOne({ where: { productId: productId } });
+    // Busca item idêntico na sessão (mesmo produto E mesmas notas de customização)
+    const existingItem = await Cart.findOne({ 
+      where: { 
+        sessionId: sessionId, 
+        productId: productId,
+        notes: cleanNotes
+      } 
+    });
 
     if (existingItem) { 
-      // Update quantity
       const newQuantity = existingItem.quantity + quantityToAdd;
       if (newQuantity > 10) {
         const error = new Error('Quantity cannot exceed 10.');
@@ -27,14 +33,20 @@ const addItemToCart = async (productId, quantity) => {
       existingItem.quantity = newQuantity;
       cartItem = await existingItem.save(); 
     } else {
-      // Create new item
+      if (quantityToAdd > 10) {
+        const error = new Error('Quantity cannot exceed 10.');
+        error.status = 400;
+        throw error;
+      }
       cartItem = await Cart.create({
+        sessionId: sessionId,
         productId: productId,
         quantity: quantityToAdd,
+        notes: cleanNotes
       });
     }
 
-    // Refresh to include Product data
+    // Retorna item completo com dados do Produto
     const fullCartItem = await Cart.findByPk(cartItem.id, {
       include: [{
         model: Product,
@@ -42,7 +54,7 @@ const addItemToCart = async (productId, quantity) => {
       }]
     });
 
-    return fullCartItem; // This is the final, full item
+    return fullCartItem;
 
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
@@ -54,41 +66,63 @@ const addItemToCart = async (productId, quantity) => {
   }
 };
 
-const getCartContents = async () => {
+const getCartContents = async (sessionId) => {
   try {
     const items = await Cart.findAll({
+      where: { sessionId: sessionId },
       include: [{
         model: Product,
         as: 'product'
-      }]
+      }],
+      order: [['createdAt', 'ASC']]
     });
-    return items;
+
+    const validItems = [];
+    const orphanIds = [];
+    for (const item of items) {
+      if (!item.product) {
+        orphanIds.push(item.id);
+      } else {
+        validItems.push(item);
+      }
+    }
+    if (orphanIds.length > 0) {
+      await Cart.destroy({ where: { id: orphanIds } });
+    }
+
+    return validItems;
   } catch (error) {
     throw new Error('Database error while fetching cart: ' + error.message);
   }
 };
 
-const removeItemFromCart = async (cartItemId) => {
+const removeItemFromCart = async (sessionId, cartItemId) => {
   try {
-    const item = await Cart.findByPk(cartItemId);
+    const item = await Cart.findOne({
+      where: { 
+        id: cartItemId,
+        sessionId: sessionId 
+      }
+    });
+
     if (!item) {
-      const error = new Error('Cart item not found.');
+      const error = new Error('Cart item not found in this session.');
       error.status = 404;
       throw error;
     }
+
     await item.destroy();
-    return { status: 204 }; // sucessful deletion with no content
+    return { status: 204 };
   } catch (error) {
     throw error;
   }
 };
 
-const updateItemQuantity = async (cartItemId, newQuantity) => {
+const updateItemQuantity = async (sessionId, cartItemId, newQuantity) => {
   try {
-    // validation
     if (newQuantity < 1) {
       const error = new Error('Quantity must be at least 1.');
-      error.status = 400; // Bad Request
+      error.status = 400;
       throw error;
     }
     if (newQuantity > 10) {
@@ -97,19 +131,22 @@ const updateItemQuantity = async (cartItemId, newQuantity) => {
       throw error;
     }
 
-    // search item
-    const item = await Cart.findByPk(cartItemId);
+    const item = await Cart.findOne({
+      where: { 
+        id: cartItemId,
+        sessionId: sessionId 
+      }
+    });
+
     if (!item) {
-      const error = new Error('Cart item not found.');
+      const error = new Error('Cart item not found in this session.');
       error.status = 404;
       throw error;
     }
 
-    // update 
     item.quantity = newQuantity;
     await item.save();
 
-    // fetch full item with new quantity
     const fullCartItem = await Cart.findByPk(item.id, {
       include: [{ model: Product, as: 'product' }]
     });
@@ -126,20 +163,9 @@ const updateItemQuantity = async (cartItemId, newQuantity) => {
   }
 };
 
-const checkoutCart = async () => {
-  try {
-    await Cart.destroy({ where: {} }); // Clear the cart
-
-    return { message: 'Checkout simulated successfully!' };
-  } catch (error) {
-    throw new Error('Error during checkout: ' + error.message);
-  }
-};
-
 module.exports = {
   addItemToCart,
   getCartContents,
   removeItemFromCart,
-  updateItemQuantity,
-  checkoutCart
+  updateItemQuantity
 };

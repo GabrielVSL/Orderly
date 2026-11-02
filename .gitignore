@@ -1,48 +1,85 @@
-# Compiled class file
-*.class
+# ==============================================================================
+# PATTIES / ORDERLY — PRODUCTION .GITIGNORE
+# ==============================================================================
 
-# Log file
+# 1. Dependências do Node.js
+node_modules/
+*/node_modules/
+package-lock.json.bak
+
+# 2. Variáveis de Ambiente & Segredos (CRÍTICO)
+.env
+.env.*
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# 3. Bancos de Dados Locais & Arquivos SQLite
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.db
+backend/database/
+backend/dev.sqlite
+
+# 4. Saídas de Build & Compilação
+dist/
+dist-ssr/
+build/
+frontend/dist/
+*.tsbuildinfo
+
+# 5. Logs & Debuggers
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# BlueJ files
-*.ctxt
+# 6. Testes & Relatórios de Cobertura
+coverage/
+.nyc_output/
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# 7. Arquivos do Sistema Operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
 
-# Package Files #
+# 8. Arquivos de Editores & IDEs
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.sublime-workspace
+*.sublime-project
+
+# 9. Arquivos temporários pesados soltos na raiz (vídeos brutos/renderizações)
+/*.mp4
+/*.mov
+/*.avi
+/*.mkv
+# Mantém o vídeo oficial da hero em frontend/public/videos/
+!frontend/public/videos/hero.mp4
+
+# 10. Arquivos de pacotes comprimidos
 *.jar
 *.war
-*.nar
-*.ear
 *.zip
 *.tar.gz
 *.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
-
-# Backend database files
-*.sqlite
-*.sqlite3
-
-# Ambiental files
-.env
-.env.*
-
-# Logs
-logs
-*.log
-npm-debug.log*
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# IDE files
-.vscode/
-.idea/
-
-#Node.js
-node_modules/

@@ -1,50 +1,93 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { PlusIcon, MinusIcon, TrashIcon } from '@heroicons/react/24/outline'; 
+import { PlusIcon, MinusIcon, TrashIcon } from '@heroicons/react/24/solid'; 
+import { formatCurrency } from '../utils/formatCurrency';
 
 function CartItemRow({ item, isLoading, removeFromCart, updateQuantity }) {
-  // UUse imageUrl from product data or a placeholder
-  const imageUrl = item.product.imageUrl || `https://placehold.co/100x100/E9D5FF/6B21A8?text=${item.product.name.charAt(0)}`;
+  if (!item || !item.product) return null;
+
+  const product = item.product;
+  const imageUrl = product.imageUrl || 'https://pattiesburger.com/wp-content/uploads/2022/04/ORIGINAL.jpg';
+  const productName = product.name || 'Item do Cardápio';
+  const productPrice = Number(product.price) || 0;
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      className="flex items-center space-x-4 p-4 rounded-2xl border border-purple-200/50 bg-white"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -6 }}
+      className="flex items-center gap-3 p-3 bg-white border border-[#141413]/20 shadow-xs hover:border-[#141413]/50 transition-colors"
     >
-      <img src={imageUrl} alt={item.product.name} className="w-20 h-20 rounded-md object-cover" />
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold">{item.product.name}</h3>
-        <p className="text-brand-purple font-bold">${item.product.price}</p>
+      {/* Imagem do Produto em Moldura Retangular Retrô */}
+      <div className="w-14 h-14 bg-[#FAF7F2] border border-[#141413]/15 flex-shrink-0 overflow-hidden p-1 flex items-center justify-center">
+        <img 
+          src={imageUrl} 
+          alt={productName} 
+          className="w-full h-full object-cover" 
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'https://pattiesburger.com/wp-content/uploads/2022/04/ORIGINAL.jpg';
+          }}
+        />
       </div>
-      <div className="flex flex-col items-end">
-        
-        <div className="flex items-center border rounded-full">
+      
+      {/* Detalhes do Produto */}
+      <div className="flex-1 min-w-0">
+        <h4 className="font-serif font-bold text-sm text-[#141413] truncate leading-tight">
+          {productName}
+        </h4>
+        {item.notes && (
+          <span className="font-mono text-[9px] text-[#D71920] font-bold block truncate mt-0.5">
+            ★ {item.notes}
+          </span>
+        )}
+        <div className="flex items-center gap-2 mt-0.5">
+          <span className="font-mono text-xs font-bold text-[#D71920]">
+            {formatCurrency(productPrice)}
+          </span>
+          <span className="font-mono text-[9px] uppercase tracking-wider text-[#141413]/40">
+            / un
+          </span>
+        </div>
+      </div>
+
+      {/* Controles de Quantidade & Lixeira */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center border border-[#141413]/25 bg-[#FAF7F2]">
           <button 
+            type="button"
             onClick={() => updateQuantity(item.id, item.quantity - 1)} 
             disabled={isLoading}
-            className="p-2 text-gray-600 hover:text-red-500"
+            aria-label="Diminuir quantidade"
+            className="w-6 h-6 flex items-center justify-center text-[#141413] hover:bg-[#141413] hover:text-[#FEDB00] disabled:opacity-30 transition-colors cursor-pointer text-xs font-bold"
           >
-            <MinusIcon className="h-4 w-4" />
+            <MinusIcon className="h-3 w-3" />
           </button>
-          <span className="px-3 font-semibold">{item.quantity}</span>
+          
+          <span className="font-mono text-xs font-bold w-6 text-center text-[#141413]">
+            {item.quantity}
+          </span>
+
           <button 
+            type="button"
             onClick={() => updateQuantity(item.id, item.quantity + 1)} 
             disabled={isLoading}
-            className="p-2 text-gray-600 hover:text-green-500"
+            aria-label="Aumentar quantidade"
+            className="w-6 h-6 flex items-center justify-center text-[#141413] hover:bg-[#141413] hover:text-[#FEDB00] disabled:opacity-30 transition-colors cursor-pointer text-xs font-bold"
           >
-            <PlusIcon className="h-4 w-4" />
+            <PlusIcon className="h-3 w-3" />
           </button>
         </div>
-        
+
         <button 
+          type="button"
           onClick={() => removeFromCart(item.id)} 
           disabled={isLoading}
-          className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-100 transition-colors disabled:opacity-50"
+          aria-label="Remover item"
+          className="p-1.5 text-[#141413]/40 hover:text-[#D71920] transition-colors cursor-pointer"
         >
-          <TrashIcon className="h-5 w-5" />
+          <TrashIcon className="h-4 w-4" />
         </button>
       </div>
     </motion.div>

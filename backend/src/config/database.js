@@ -8,14 +8,17 @@ if (process.env.DATABASE_URL) {
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false // Obrigatório para bancos de dados em nuvem
+        rejectUnauthorized: false
       }
     }
   };
 } else {
-  // Se não existir (na sua máquina), ele continua usando o seu SQLite original
+  // Se for ambiente de testes, usa SQLite em memória para não limpar os dados de desenvolvimento
   module.exports = {
     dialect: 'sqlite',
-    storage: path.join(__dirname, '../../database/db.sqlite3') // Caminho para o arquivo do banco
+    storage: process.env.NODE_ENV === 'test' 
+      ? ':memory:' 
+      : path.join(__dirname, '../../database/db.sqlite3'),
+    logging: false
   };
 }
