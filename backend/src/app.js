@@ -42,8 +42,24 @@ app.use(express.json());
 app.use(sessionMiddleware);
 app.use(extractUser);
 
-// Health check endpoint
-app.get('/health', (req, res) => {
+// Rota Raiz Informativa (evita o erro "Cannot GET /" ao abrir o link da API no navegador)
+app.get('/', (req, res) => {
+  res.status(200).json({
+    name: 'Patties Burger Direct API (Orderly)',
+    status: 'online',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      products: '/api/products',
+      orders: '/api/orders',
+      cart: '/api/cart',
+      auth: '/api/auth'
+    }
+  });
+});
+
+// Health check endpoint (compatível com /health e /api/health para serviços de keep-alive)
+app.get(['/health', '/api/health'], (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
