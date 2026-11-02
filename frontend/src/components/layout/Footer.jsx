@@ -29,7 +29,7 @@ export const Footer = () => {
             Avaliações
           </Link>
           <Link to="/#lojas" className="hover:opacity-65 transition-opacity">
-            Lojas SP
+            Lojas (SP & BH)
           </Link>
           <Link to="/orders" className="hover:opacity-65 transition-opacity">
             Rastrear Pedido

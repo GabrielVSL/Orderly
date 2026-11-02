@@ -5,7 +5,7 @@ import {
   ArrowLeftIcon, 
   CheckIcon, 
   PlusIcon, 
-  ShoppingBagIcon, 
+  ShoppingCartIcon, 
   EyeIcon,
   ForwardIcon
 } from '@heroicons/react/24/solid';
@@ -20,6 +20,7 @@ const STEPS = [
     number: 1,
     id: 'smash',
     title: 'Escolha seu Burger',
+    mobileTitle: 'Burgers',
     subtitle: 'Nossos clássicos smash prensados na chapa de ferro fundido a 250°C.',
     categories: ['lanches', '4up', 'combos'],
     tag: '01 / O SMASH PRINCIPAL'
@@ -28,6 +29,7 @@ const STEPS = [
     number: 2,
     id: 'sides',
     title: 'Acompanhamentos',
+    mobileTitle: 'Acompanhamentos',
     subtitle: 'Batatas skinny ultra finas e crocantes ou bites de frango (opcional).',
     categories: ['batatas', 'frango'],
     tag: '02 / BATATAS & BITES'
@@ -36,6 +38,7 @@ const STEPS = [
     number: 3,
     id: 'drinks',
     title: 'Bebidas & Shakes',
+    mobileTitle: 'Bebidas & Shakes',
     subtitle: 'Refrescos artesanais de groselha e tamarindo ou milkshakes batidos na hora (opcional).',
     categories: ['bebidas', 'sobremesas'],
     tag: '03 / BEBIDAS & SHAKES'
@@ -70,8 +73,9 @@ export function OrderBuilderPage() {
   const totalItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const getProductCartCount = (productId) => {
-    const item = cartItems.find(ci => ci.productId === productId || ci.product?.id === productId);
-    return item ? item.quantity : 0;
+    return cartItems
+      .filter(ci => ci.productId === productId || ci.product?.id === productId)
+      .reduce((sum, ci) => sum + ci.quantity, 0);
   };
 
   const handleNextStep = () => {
@@ -94,9 +98,9 @@ export function OrderBuilderPage() {
     <div className="min-h-screen bg-[#E4DFD5] text-[#141413] pb-32">
       
       {/* Clean Hairline Stepper Header */}
-      <div className="bg-[#EAE5DC]/95 backdrop-blur-md border-b border-[#141413]/15 sticky top-[52px] z-30">
-        <div className="max-w-[1280px] mx-auto px-5 sm:px-10 py-3.5">
-          <div className="grid grid-cols-3 gap-2 sm:gap-6 divide-x divide-[#141413]/15">
+      <div className="bg-[#EAE5DC] border-b border-[#141413]/15 sticky top-[52px] sm:top-[57px] z-30 shadow-sm">
+        <div className="max-w-[1280px] mx-auto px-3 sm:px-10 py-3">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-6 divide-x divide-[#141413]/15">
             {STEPS.map((step, idx) => {
               const isActive = idx === currentStepIndex;
               const isPast = idx < currentStepIndex;
@@ -106,16 +110,17 @@ export function OrderBuilderPage() {
                   key={step.id}
                   onClick={() => setCurrentStepIndex(idx)}
                   className={`text-left transition-opacity cursor-pointer ${
-                    idx > 0 ? 'pl-3 sm:pl-6' : ''
+                    idx > 0 ? 'pl-2 sm:pl-6' : ''
                   } ${isActive ? 'opacity-100' : 'opacity-45 hover:opacity-80'}`}
                 >
-                  <span className={`block text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.2em] ${
+                  <span className={`block text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.14em] sm:tracking-[0.2em] ${
                     isActive ? 'text-[#D71920] font-bold' : 'text-[#141413]'
                   }`}>
                     {isPast ? `✓ 0${step.number}` : `PASSO 0${step.number}`}
                   </span>
-                  <h4 className="font-serif text-sm sm:text-lg text-[#141413] truncate mt-0.5">
-                    {step.title}
+                  <h4 className="font-serif text-[11px] sm:text-base md:text-lg text-[#141413] leading-tight mt-0.5 whitespace-normal break-words">
+                    <span className="hidden sm:inline">{step.title}</span>
+                    <span className="sm:hidden">{step.mobileTitle}</span>
                   </h4>
                 </button>
               );
@@ -125,10 +130,25 @@ export function OrderBuilderPage() {
       </div>
 
       {/* Main Content Area */}
-      <main className="max-w-[1280px] mx-auto px-5 sm:px-10 pt-10 sm:pt-14">
+      <main className="max-w-[1280px] mx-auto px-4 sm:px-10 pt-6 sm:pt-10">
         
+        {/* Navigation Breadcrumb / Return to home */}
+        <div className="flex items-center justify-between gap-4 mb-4 pb-3 border-b border-[#141413]/10">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-[0.18em] text-[#141413]/70 hover:text-[#D71920] transition-colors group"
+          >
+            <span className="group-hover:-translate-x-1 transition-transform">←</span>
+            <span>Voltar ao Início / Cardápio</span>
+          </Link>
+
+          <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-[#141413]/55">
+            Etapa {currentStepIndex + 1} de {STEPS.length}
+          </span>
+        </div>
+
         {/* Step Intro Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-6 border-b border-[#141413]/20">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10 pb-6 border-b border-[#141413]/20">
           <div>
             <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#D71920] font-bold block mb-2">
               {currentStep.tag}
@@ -261,8 +281,8 @@ export function OrderBuilderPage() {
               className="px-3.5 py-2 border border-white/20 hover:border-white/50 transition-colors cursor-pointer flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em]"
               title="Abrir comanda completa"
             >
-              <ShoppingBagIcon className="w-4 h-4 text-[#FEDB00]" />
-              <span>Comanda ({totalItemsCount})</span>
+              <ShoppingCartIcon className="w-4 h-4 text-[#FEDB00]" />
+              <span>Carrinho ({totalItemsCount})</span>
             </button>
 
             <div>
@@ -313,6 +333,7 @@ export function OrderBuilderPage() {
         product={detailProduct}
         isOpen={!!detailProduct}
         onClose={() => setDetailProduct(null)}
+        allProducts={products}
       />
 
     </div>

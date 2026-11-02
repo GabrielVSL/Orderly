@@ -1,9 +1,9 @@
 const cartService = require('../services/cartService');
 
 const addItem = async (req, res) => {
-  const { productId, quantity } = req.body;
+  const { productId, quantity, notes } = req.body;
   try {
-    const newItem = await cartService.addItemToCart(req.sessionId, productId, quantity);
+    const newItem = await cartService.addItemToCart(req.sessionId, productId, quantity, notes);
     res.status(201).json(newItem);
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message });

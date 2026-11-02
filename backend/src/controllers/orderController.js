@@ -2,7 +2,7 @@ const orderService = require('../services/orderService');
 
 const checkout = async (req, res) => {
   try {
-    const order = await orderService.createOrder(req.sessionId, req.body);
+    const order = await orderService.createOrder(req.sessionId, req.body, req.userId);
     res.status(201).json({
       message: 'Pedido realizado com sucesso!',
       order
@@ -15,7 +15,7 @@ const checkout = async (req, res) => {
 const getOrder = async (req, res) => {
   try {
     const { orderNumber } = req.params;
-    const order = await orderService.getOrderByNumber(orderNumber);
+    const order = await orderService.getOrderByNumber(orderNumber, req.userId, req.user?.email, req.sessionId);
     res.status(200).json(order);
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message });
@@ -24,7 +24,7 @@ const getOrder = async (req, res) => {
 
 const getSessionOrders = async (req, res) => {
   try {
-    const orders = await orderService.getOrdersBySession(req.sessionId);
+    const orders = await orderService.getOrdersByUserOrSession(req.userId, req.sessionId, req.user?.email);
     res.status(200).json(orders);
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message });
@@ -35,7 +35,16 @@ const updateStatus = async (req, res) => {
   try {
     const { orderNumber } = req.params;
     const { status } = req.body;
-    const updatedOrder = await orderService.updateOrderStatus(orderNumber, status);
+    const isAdmin = Boolean(
+      process.env.ADMIN_API_KEY && req.headers['x-admin-key'] === process.env.ADMIN_API_KEY
+    );
+    const updatedOrder = await orderService.updateOrderStatus(
+      orderNumber,
+      status,
+      req.userId,
+      req.sessionId,
+      isAdmin
+    );
     res.status(200).json(updatedOrder);
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message });

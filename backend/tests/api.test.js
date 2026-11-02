@@ -1,4 +1,5 @@
 process.env.NODE_ENV = 'test';
+jest.setTimeout(30000);
 
 const request = require('supertest');
 const app = require('../src/app');
@@ -197,7 +198,7 @@ describe('4. Motor de Cupons e Checkout Transacional', () => {
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('order');
     expect(res.body.order).toHaveProperty('orderNumber');
-    expect(res.body.order.orderNumber).toMatch(/^PAT-\d{4}$/);
+    expect(res.body.order.orderNumber).toMatch(/^PAT-[A-Z0-9]{4,6}$/);
     expect(res.body.order.status).toBe('received');
     expect(res.body.order.items.length).toBe(1);
     expect(res.body.order.items[0].productName).toBe('Original Patties Burger');

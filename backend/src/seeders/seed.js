@@ -1,4 +1,4 @@
-const { sequelize, Product } = require('../models');
+const { sequelize, Product, Cart } = require('../models');
 
 const pattiesProductSeedData = [
   // --- LANCHES (SMASH BURGERS) ---
@@ -197,7 +197,7 @@ const pattiesProductSeedData = [
     rating: 5.0,
     category: 'batatas',
     isFeatured: true,
-    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/2---skinny-perfect-fries.jpg'
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/2-%E2%80%93-skinny-perfect-fries.jpg'
   },
   {
     name: 'Nhonhonese da Casa (Pote 50ml)',
@@ -264,7 +264,7 @@ const pattiesProductSeedData = [
     rating: 4.9,
     category: 'sobremesas',
     isFeatured: true,
-    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8---Milkshake-Frosted-1024x982.jpg'
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8-%E2%80%93-Milkshake-Frosted.jpg'
   },
   {
     name: 'Milkshake Pink Morango',
@@ -273,7 +273,7 @@ const pattiesProductSeedData = [
     rating: 4.8,
     category: 'sobremesas',
     isFeatured: false,
-    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8---Milkshake-Pink-1024x982.jpg'
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8-%E2%80%93-Milkshake-Pink.jpg'
   },
   {
     name: 'Milkshake Blue Retrô',
@@ -282,7 +282,7 @@ const pattiesProductSeedData = [
     rating: 4.9,
     category: 'sobremesas',
     isFeatured: true,
-    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8---Milkshake-Blue-1024x982.jpg'
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8-%E2%80%93-Milkshake-Blue.jpg'
   },
   {
     name: 'Cascão Frosted Baunilha',
@@ -291,7 +291,7 @@ const pattiesProductSeedData = [
     rating: 4.7,
     category: 'sobremesas',
     isFeatured: false,
-    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8---cascao-frosted-1024x982.jpg'
+    imageUrl: 'https://pattiesburger.com/wp-content/uploads/2023/05/alteracao-8-%E2%80%93-cascao-frosted.jpg'
   }
 ];
 
@@ -300,25 +300,48 @@ async function seedDatabase() {
     await sequelize.authenticate();
     console.log(' Conexão com o banco estabelecida com sucesso.');
 
+    // Garante compatibilidade de colunas no SQLite de forma segura
+    const queryInterface = sequelize.getQueryInterface();
+    const safeAddColumn = async (table, column, definition) => {
+      try {
+        const tableDesc = await queryInterface.describeTable(table);
+        if (!tableDesc[column]) {
+          await queryInterface.addColumn(table, column, definition);
+        }
+      } catch {}
+    };
+
+    await safeAddColumn('orders', 'userId', { type: sequelize.Sequelize.INTEGER, allowNull: true });
+    await safeAddColumn('cart_items', 'notes', { type: sequelize.Sequelize.TEXT, allowNull: true });
+    await safeAddColumn('order_items', 'notes', { type: sequelize.Sequelize.TEXT, allowNull: true });
+    await safeAddColumn('users', 'resetPasswordToken', { type: sequelize.Sequelize.STRING, allowNull: true });
+    await safeAddColumn('users', 'resetPasswordExpires', { type: sequelize.Sequelize.DATE, allowNull: true });
+
     // Sincroniza tabelas se ainda não existirem
     await sequelize.sync();
 
-    // Desativa foreign keys temporariamente para permitir limpeza segura
     const dialect = sequelize.getDialect();
-    if (dialect === 'sqlite') {
-      await sequelize.query('PRAGMA foreign_keys = OFF;');
-    }
+    const forceSeed = process.argv.includes('--force');
+    const existingCount = await Product.count();
 
-    // Limpa produtos antigos
-    await Product.destroy({ where: {} });
-    console.log(' Tabela de produtos limpa.');
+    if (existingCount > 0 && !forceSeed && dialect === 'postgres') {
+      console.log(` Catálogo já possui ${existingCount} produtos em produção (PostgreSQL). Pulando recriação destrutiva.`);
+    } else {
+      if (dialect === 'sqlite') {
+        await sequelize.query('PRAGMA foreign_keys = OFF;');
+      }
 
-    // Insere catálogo oficial Patties Burger
-    const inserted = await Product.bulkCreate(pattiesProductSeedData);
-    console.log(` Sucesso! ${inserted.length} itens oficiais do Patties Burger foram semeados no banco de dados.`);
+      // Limpa produtos antigos e popula catálogo oficial
+      await Cart.destroy({ where: {} });
+      await Product.destroy({ where: {} });
+      console.log(' Tabela de produtos limpa.');
 
-    if (dialect === 'sqlite') {
-      await sequelize.query('PRAGMA foreign_keys = ON;');
+      const inserted = await Product.bulkCreate(pattiesProductSeedData);
+      console.log(` Sucesso! ${inserted.length} itens oficiais do Patties Burger foram semeados no banco de dados.`);
+
+      if (dialect === 'sqlite') {
+        await sequelize.query('PRAGMA foreign_keys = ON;');
+      }
     }
   } catch (error) {
     console.error('❌ Falha ao semear banco de dados:', error);

@@ -74,7 +74,7 @@ export function ProductCard({ product, onOpenDetail, style, isFeature = false })
                 type="button"
                 onClick={handleQuickAdd}
                 disabled={isCartLoading}
-                aria-label="Adicionar à sacola"
+                aria-label="Adicionar ao carrinho"
                 className="flex items-center gap-1.5 px-5 py-2.5 bg-patties-red hover:bg-patties-red-dark text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-badge-red hover:shadow-elevated transition-all cursor-pointer"
               >
                 <PlusIcon className="h-4 w-4 stroke-[3]" />

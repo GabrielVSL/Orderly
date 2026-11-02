@@ -85,7 +85,7 @@ export const OrderSummary = ({
             </div>
           ))
         ) : (
-          <p className="text-neutral-400 text-xs py-2 text-center font-bold">Nenhum item na sacola.</p>
+          <p className="text-neutral-400 text-xs py-2 text-center font-bold">Nenhum item no carrinho.</p>
         )}
       </div>
 

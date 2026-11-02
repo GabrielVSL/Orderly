@@ -6,8 +6,11 @@ export const Hero = () => {
   return (
     <section className="relative w-full h-screen min-h-[680px] max-h-[1080px] overflow-hidden flex flex-col justify-between bg-[#141413] text-white select-none">
       
-      {/* Background Looping UHD Video */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden">
+      {/* Background Looping UHD Video com Poster e Fallback do Primeiro Frame */}
+      <div 
+        className="absolute inset-0 w-full h-full overflow-hidden bg-cover bg-center"
+        style={{ backgroundImage: `url(${brandConfig.heroImage})` }}
+      >
         <video
           autoPlay
           loop

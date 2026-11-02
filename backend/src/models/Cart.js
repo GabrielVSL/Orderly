@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Quantity cannot exceed 10."
         }
       }
+    },
+    notes: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     }
   }, {
     tableName: 'cart_items',

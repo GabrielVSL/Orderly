@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     customerName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -71,7 +75,8 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'orders',
     indexes: [
       { fields: ['sessionId'] },
-      { fields: ['orderNumber'] }
+      { fields: ['orderNumber'] },
+      { fields: ['userId'] }
     ]
   });
 

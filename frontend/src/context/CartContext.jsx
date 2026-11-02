@@ -19,7 +19,8 @@ export function CartProvider({ children }) {
       setError(null);
       try {
         const response = await api.get("/cart");
-        setCartItems(response.data);
+        const items = Array.isArray(response.data) ? response.data.filter(i => i && i.product) : [];
+        setCartItems(items);
       } catch (err) {
         setError(err.message);
         console.error("Failed to load cart:", err);
@@ -34,15 +35,16 @@ export function CartProvider({ children }) {
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
-  const addToCart = async (productId, quantity = 1, openDrawer = true) => {
+  const addToCart = async (productId, quantity = 1, openDrawer = true, notes = null) => {
     setLoading(true);
     setError(null);
-    const toastId = toast.loading('Adicionando à sacola...');
+    const toastId = toast.loading('Adicionando ao carrinho...');
 
     try {
       const response = await api.post("/cart", {
         productId: productId,
         quantity: quantity,
+        notes: notes || undefined
       });
 
       setCartItems((prevItems) => {
@@ -63,10 +65,12 @@ export function CartProvider({ children }) {
       if (openDrawer) {
         openCart();
       }
+      return response.data;
     } catch (err) {
       const msg = err.response?.data?.message || 'Não foi possível adicionar o item. Tente novamente.';
       setError(msg);
       toast.error(msg, { id: toastId });
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -83,7 +87,7 @@ export function CartProvider({ children }) {
       setCartItems(prevItems => 
         prevItems.filter(item => item.id !== cartItemId)
       );
-      toast.success('Item removido da sacola.', { id: toastId });
+      toast.success('Item removido do carrinho.', { id: toastId });
     } catch (err) {
       setError(err.message);
       toast.error('Erro ao remover item.', { id: toastId });
@@ -133,6 +137,7 @@ export function CartProvider({ children }) {
       const response = await api.post('/orders', orderPayload);
       const createdOrder = response.data.order;
       setCartItems([]);
+      localStorage.setItem('patties_active_order', createdOrder.orderNumber);
       
       toast.success('Pedido realizado com sucesso!', { id: toastId });
       navigate('/success', { state: { order: createdOrder } });

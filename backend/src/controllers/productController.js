@@ -7,7 +7,8 @@ const list = async (req, res) => {
     const products = await productService.getAllProducts({ category, search, maxPrice });
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching products: ' + error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Erro ao carregar cardápio. Tente novamente mais tarde.' });
   }
 };
 
@@ -21,7 +22,8 @@ const getById = async (req, res) => {
     }
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching product: ' + error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Erro ao buscar produto. Tente novamente mais tarde.' });
   }
 };
 

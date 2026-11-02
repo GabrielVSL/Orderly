@@ -5,14 +5,21 @@ export const brandConfig = {
   subTagline: 'Hambúrguer de verdade, do jeito que era feito antigamente.',
   slogan: 'O primeiro smash burger do Brasil. Pão tostado na manteiga de garrafa, carne ultra prensada com crostinha crocante e queijo derretido.',
   logoUrl: 'https://pattiesburger.com/wp-content/uploads/2019/08/patties-burger-2-1.png',
-  heroImage: 'https://pattiesburger.com/wp-content/uploads/2022/04/4-UP-CHEESEBACON.jpg',
-  storefrontImage: 'https://pattiesburger.com/wp-content/uploads/2019/11/patties-burguer-frente-loja-brooklin.jpg',
+  heroImage: '/images/hero.png',
+  storefrontImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2560&auto=format&fit=crop',
   instagram: '@pattiesburger',
   instagramUrl: 'https://www.instagram.com/pattiesburger/',
   websiteUrl: 'https://pattiesburger.com/',
   currency: 'BRL',
   freeDeliveryThreshold: 50.00,
   defaultDeliveryFee: 7.90,
+  courier: {
+    serviceName: 'Entregador Patties Express',
+    name: 'Carlos Eduardo',
+    vehicle: 'Honda CG 160 Fan • Placa PAT-2026',
+    rating: '4.9',
+    iconUrl: '/images/delivery-motorcycle.png'
+  },
   colors: {
     primary: '#D71920',       // Patties Red oficial
     primaryHover: '#B71218',
@@ -36,13 +43,14 @@ export const brandConfig = {
   ],
   stores: [
     { name: 'Brooklin', address: 'Rua Flórida, 1420 - Brooklin, São Paulo' },
-    { name: 'Itaim Bibi', address: 'Rua Prof. Atílio Innocenti, 209 - Itaim Bibi, São Paulo' },
-    { name: 'Pinheiros', address: 'Rua dos Pinheiros, 262 - Pinheiros, São Paulo' },
+    { name: 'Pinheiros', address: 'Rua dos Pinheiros, 875 - Pinheiros, São Paulo' },
+    { name: 'Pampulha', address: 'Av. Fleming, 800 - Pampulha, Belo Horizonte' },
+    { name: 'Savassi', address: 'Av. Cristóvão Colombo, 480 - Savassi, Belo Horizonte' },
   ],
   coupons: [
     { code: 'PATTIES10', label: '10% OFF no pedido', discountText: '10% de desconto' },
     { code: 'PRIMEIRACOMPRA', label: '15% OFF de Boas-Vindas', discountText: '15% de desconto' },
-    { code: 'FRETEGRATIS', label: 'Frete Grátis acima de R$ 30', discountText: 'Frete Grátis' },
+    { code: 'FRETEGRATIS', label: 'Frete Grátis garantido', discountText: 'Frete Grátis' },
   ]
 };
 

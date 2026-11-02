@@ -15,10 +15,15 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 // Load models
+db.User = require('./User.js')(sequelize, Sequelize.DataTypes);
 db.Product = require('./Product.js')(sequelize, Sequelize.DataTypes);
 db.Cart = require('./Cart.js')(sequelize, Sequelize.DataTypes);
 db.Order = require('./Order.js')(sequelize, Sequelize.DataTypes);
 db.OrderItem = require('./OrderItem.js')(sequelize, Sequelize.DataTypes);
+
+// Associations: User & Orders
+db.User.hasMany(db.Order, { as: 'orders', foreignKey: 'userId' });
+db.Order.belongsTo(db.User, { as: 'user', foreignKey: 'userId' });
 
 // Associations: Cart & Products
 db.Product.hasMany(db.Cart, { as: 'cartItems', foreignKey: 'productId' }); 

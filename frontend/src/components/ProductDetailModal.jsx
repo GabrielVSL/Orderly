@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon, PlusIcon, MinusIcon, CheckIcon, FireIcon } from '@heroicons/react/24/solid';
 import { formatCurrency } from '../utils/formatCurrency';
 import { useCart } from '../context/CartContext';
-import toast from 'react-hot-toast';
 
-export const ProductDetailModal = ({ product, isOpen, onClose }) => {
+export const ProductDetailModal = ({ product, isOpen, onClose, allProducts = [] }) => {
   const { addToCart } = useCart();
+
   const [quantity, setQuantity] = useState(1);
   const [selectedGrill, setSelectedGrill] = useState('padrão');
   const [extraSauce, setExtraSauce] = useState(false);
   const [noOnion, setNoOnion] = useState(false);
   const [noPickles, setNoPickles] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Reseta os seletores sempre que abrir ou trocar de produto (REV-01)
+  useEffect(() => {
+    if (isOpen) {
+      setQuantity(1);
+      setSelectedGrill('padrão');
+      setExtraSauce(false);
+      setNoOnion(false);
+      setNoPickles(false);
+    }
+  }, [product?.id, isOpen]);
 
   if (!product) return null;
 
@@ -19,11 +31,37 @@ export const ProductDetailModal = ({ product, isOpen, onClose }) => {
   const unitPrice = Number(product.price) + extraPrice;
   const totalPrice = unitPrice * quantity;
 
-  const handleAddToCart = () => {
-    // Add to cart with note/customization
-    addToCart(product.id, quantity);
-    toast.success(`${quantity}x ${product.name} adicionado à sacola!`);
-    onClose();
+  // Localiza produto oficial de molho verde caso selecionado
+  const sauceProduct = allProducts?.find((p) => p.name.toLowerCase().includes('nhonhonese'));
+
+  const handleAddToCart = async () => {
+    setIsSubmitting(true);
+    const isCustomizable =
+      product.category === 'lanches' || product.category === '4up' || product.category === 'combos';
+
+    const notesList = [];
+    if (isCustomizable) {
+      if (selectedGrill === 'bem-tostado') notesList.push('Extra Crocante');
+      if (noOnion) notesList.push('Sem Cebola');
+      if (noPickles) notesList.push('Sem Picles');
+    }
+    const itemNotes = notesList.length > 0 ? notesList.join(' • ') : null;
+
+    try {
+      // 1. Adiciona o burger principal com as customizações selecionadas
+      await addToCart(product.id, quantity, !extraSauce, itemNotes);
+
+      // 2. Se selecionou pote extra de molho, adiciona o produto de verdade (+R$ 5,00) ao carrinho
+      if (extraSauce && sauceProduct) {
+        await addToCart(sauceProduct.id, quantity, true);
+      }
+
+      onClose();
+    } catch {
+      // Erro tratado com toast no CartContext
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -210,9 +248,10 @@ export const ProductDetailModal = ({ product, isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 px-6 bg-patties-red hover:bg-patties-red-dark text-white rounded-xl font-black text-sm uppercase tracking-wider shadow-badge-red hover:shadow-elevated transition-all cursor-pointer"
+                disabled={isSubmitting}
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 px-6 bg-patties-red hover:bg-patties-red-dark text-white rounded-xl font-black text-sm uppercase tracking-wider shadow-badge-red hover:shadow-elevated transition-all cursor-pointer disabled:opacity-50"
               >
-                <span>Adicionar à Sacola</span>
+                <span>{isSubmitting ? 'Adicionando...' : 'Adicionar ao Carrinho'}</span>
                 <span>•</span>
                 <span>{formatCurrency(totalPrice)}</span>
               </button>
