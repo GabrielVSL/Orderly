@@ -66,7 +66,7 @@ const register = async (req, res) => {
 
     const token = generateToken(user.id);
 
-    // Dispara e-mail de boas-vindas com cupom de primeira compra via mensageria
+    // Dispara e-mail de boas-vindas com cupom de primeira compra via mensageria APENAS no cadastro
     mailService.sendWelcomeEmail(user).catch(err => {
       console.warn('Falha no envio de e-mail de boas-vindas no cadastro:', err.message);
     });
@@ -105,11 +105,6 @@ const login = async (req, res) => {
     }
 
     const token = generateToken(user.id);
-
-    // Dispara e-mail de boas-vindas / login confirmado para demonstrar mensageria imediata
-    mailService.sendWelcomeEmail(user).catch(err => {
-      console.warn('Falha no envio de e-mail de boas-vindas ao logar:', err.message);
-    });
 
     return res.status(200).json({
       message: 'Login realizado com sucesso!',
